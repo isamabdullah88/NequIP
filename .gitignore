@@ -3,6 +3,13 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+.DS_Store
+
+runs/
+Data/
+checkpoints/
+Presentation/
+
 # C extensions
 *.so
 

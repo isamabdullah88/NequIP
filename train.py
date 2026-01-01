@@ -1,0 +1,103 @@
+
+from data import getdata
+from model import NequIP, force
+import os
+
+import torch
+import torch.optim as optim
+import torch.nn.functional as F
+from torch.utils.tensorboard import SummaryWriter
+
+from trainutils import loadmodel, initialize_shift_scale, savecheckpoint
+from test import evaluate
+
+
+# from evaluate import peratom_mse
+
+
+
+def criterion(energy, forces, data):
+    
+    losse = F.mse_loss(energy, data.y)
+
+    lossf = F.mse_loss(forces, data.forces)
+
+    we = 1.0
+    wf = 100.0
+
+    losstot = we * losse + wf * lossf
+    # print(f"Energy Loss: {losse.item():.6f}, Force Loss: {lossf.item():.6f}, Total Loss: {losstot.item():.6f}")
+
+    return losstot
+
+def train(finetune=False):
+    import time
+
+    trainloader, valloader, _ = getdata(mini=False, batch_size=32)
+    print('Data loaded')
+    
+    writer = SummaryWriter()
+    if not os.path.exists("checkpoints"):
+        os.makedirs("checkpoints")
+
+    if finetune:
+        checkpoint_path = "checkpoints-fulldataset-train4/model_E312.pt"
+        model = loadmodel(checkpoint_path, numatoms, atomembdim, dfeatdim)
+        print(f"Loaded model from {checkpoint_path} for finetuning.")
+    else:
+        model = NequIP()
+        print("Initialized new model for training.")
+
+    # --- PLACE THIS BEFORE YOUR TRAINING LOOP ---
+    initialize_shift_scale(model, trainloader)
+
+    device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
+    print(f"Using device: {device}")
+    model = model.to(device)
+
+    optimizer = optim.Adam(model.parameters(), lr=1e-2)
+
+    epochs = 5000
+
+    model.train()
+    
+    print("Starting training...")
+    for epoch in range(epochs+1):
+
+        stime = time.time()
+        for k, batch in enumerate(trainloader):
+            batch = batch.to(device)
+            optimizer.zero_grad()
+            
+            pos = batch.pos.requires_grad_(True)
+            
+            # Forward pass with the model
+            energy = model(batch.z, pos, batch.batch)
+
+            forces = force(energy, pos)
+            
+            loss = criterion(energy, forces, batch)
+
+            loss.backward()
+            optimizer.step()
+
+            writer.add_scalar('Batch-Loss/train', loss.item(), epoch+k)
+            
+        # --- save model every 10 epochs ---
+        if epoch % 1 == 0:
+            # savefig(predictions, targets, epoch)
+            savecheckpoint(epoch, model, optimizer, loss)
+
+            print(f"Epoch [{epoch+1}/{epochs}], Loss: {loss.item():.4f}, Time Taken: {(time.time()-stime): .01f}")
+
+
+            mae_energy, mae_force = evaluate(model, valloader, device=device)
+            writer.add_scalar('MAE-Energy/val', mae_energy, epoch)
+            writer.add_scalar('MAE-Force/val', mae_force, epoch)
+            
+
+    writer.close()
+
+
+if __name__ == "__main__":
+    train(finetune=False)

@@ -1,0 +1,53 @@
+"""
+qm9_parser.py
+
+Parse QM9 .xyz files into PyTorch Geometric Data objects.
+Author: Isam Balghari
+"""
+
+import torch
+import numpy as np
+from torch_geometric.loader import DataLoader
+from torch_geometric.data import Data
+from torch.utils.data import random_split
+
+# Map from element symbol to atomic number
+ATOM_Z = {'H': 1, 'C': 6, 'N': 7, 'O': 8, 'F': 9}
+
+
+def getdata(mini=True, batch_size=32):
+
+    dataset_path = "./Data/md17_aspirin.npz"
+
+    dataset = np.load(dataset_path)
+
+    sizeidx = 211762
+    
+    z = torch.tensor(dataset['z'], dtype=torch.long)
+    pos = torch.tensor(dataset['R'], dtype=torch.float)
+    F = torch.tensor(dataset['F'], dtype=torch.float)
+    E = torch.tensor(dataset['E'], dtype=torch.float)
+
+    dataset_list = []
+    for i in range(sizeidx):
+    
+        datapt = Data(z=z, pos=pos[i], y=E[i], forces=F[i])
+
+        dataset_list.append(datapt)
+
+    trsize = int(0.8 * sizeidx)
+    vsize = int(0.1 * sizeidx)
+    ttsize = sizeidx - trsize - vsize
+
+    train_list, val_list, test_list = random_split(dataset_list, [trsize, vsize, ttsize],
+                               generator=torch.Generator().manual_seed(42))
+    print('train_list: ', len(train_list))
+    print('val_list: ', len(val_list))
+    print('test_list: ', len(test_list))
+    trainloader = DataLoader(train_list, batch_size=batch_size, shuffle=True)
+    valloader = DataLoader(val_list, batch_size=batch_size, shuffle=False)
+    testloader = DataLoader(test_list, batch_size=batch_size, shuffle=False)
+
+    return trainloader, valloader, testloader
+if __name__ == "__main__":
+    getdata()
