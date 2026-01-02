@@ -13,7 +13,7 @@ class InteractionBlock(nn.Module):
         self.owninteraction = o3.Linear(in_irreps, in_irreps)
 
         # convolution
-        self.convolution = Convolution(l0dim, l1dim, l2dim)
+        self.convolution = Convolution(l0dim, l1dim, l2dim, mps=False)
 
         # gate
         self.gate = NonLinearGate(l0dim, l1dim, l2dim)
