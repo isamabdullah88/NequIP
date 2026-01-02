@@ -1,3 +1,4 @@
+import os
 import torch
 from model import NequIP
 
@@ -64,8 +65,8 @@ def initialize_shift_scale(model, data_loader):
 
 
 
-def savecheckpoint(epoch, model, optimizer, loss):
-    checkpoint_path = f"checkpoints/model_E{epoch}.pt"
+def savecheckpoint(checkpoints_dir, epoch, model, optimizer, loss):
+    checkpoint_path = os.path.join(checkpoints_dir, "model_E{epoch}.pt")
     torch.save({
         "epoch": epoch,
         "model_state_dict": model.state_dict(),

@@ -96,7 +96,7 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
         # --- save model every 10 epochs ---
         if epoch % 1 == 0:
             # savefig(predictions, targets, epoch)
-            savecheckpoint(epoch, model, optimizer, loss)
+            savecheckpoint(checkpoints_dir, epoch, model, optimizer, loss)
 
             print(f"Epoch [{epoch+1}/{epochs}], Loss: {loss.item():.4f}, Time Taken: {(time.time()-stime): .01f}")
 
