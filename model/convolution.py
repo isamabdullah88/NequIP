@@ -65,7 +65,7 @@ class Convolution(nn.Module):
 
     def forward(self, nodes, pos, batch):
 
-        edgeidxs = radius_graph(pos.cpu(), r=self.rcut, batch=batch.cpu(), max_num_neighbors=100).to("mps")
+        edgeidxs = radius_graph(pos, r=self.rcut, batch=batch, max_num_neighbors=100)
 
         src, dst = edgeidxs
 
