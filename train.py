@@ -31,7 +31,7 @@ def criterion(energy, forces, data):
     return losstot
 
 def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics/ML-DFT/NequIP/", finetune=False, 
-          batch_size=32, checkpoint_ft='model_E0.pth'):
+          batch_size=32, checkpoint_ft='model_E0.pth', mps=False):
     
     import time
 
@@ -58,7 +58,10 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
     # --- PLACE THIS BEFORE YOUR TRAINING LOOP ---
     initialize_shift_scale(model, trainloader)
 
-    device = torch.device('cuda' if torch.backends.mps.is_available() else 'cpu')
+    if mps:
+        device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
+    else:
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}")
     model = model.to(device)
 
@@ -114,6 +117,7 @@ if __name__ == "__main__":
                        type=str, help='Base directory for data.')
     parser.add_argument('--results_dir', default="/content/drive/My Drive/MS-Physics/ML-DFT/NequIP/",
                        type=str, help='Base directory for checkpoints.')
+    parser.add_argument('--mps', default=False, type=bool, help='Specify if the code is running on Mac/Cuda.')
     parser.add_argument('--finetune', default=False, type=bool, help='Fine-tune from a ' \
     'pre-trained model.')
     parser.add_argument('--batch_size', default=32, type=int, help='Batch size for training.')
@@ -123,4 +127,4 @@ if __name__ == "__main__":
 
 
     train(args.data_dir, args.results_dir, finetune=args.finetune, batch_size=args.batch_size,
-          checkpoint_ft=args.checkpoint_ft)
+          checkpoint_ft=args.checkpoint_ft, mps=args.mps)
