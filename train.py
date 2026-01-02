@@ -30,14 +30,14 @@ def criterion(energy, forces, data):
 
     return losstot
 
-def train(finetune=False, batch_size=32, checkpoint_ft='model_E0.pth'):
+def train(basedir = "/content/drive/My Drive/MS-Physics/ML-DFT/NequIP/", finetune=False, 
+          batch_size=32, checkpoint_ft='model_E0.pth'):
+    
     import time
 
-    trainloader, valloader, _ = getdata(mini=False, batch_size=batch_size)
+    trainloader, valloader, _ = getdata(basedir, mini=False, batch_size=batch_size)
     trainsize = int(len(trainloader.dataset) / batch_size)
     print('Data loaded')
-    
-    basedir = "/content/drive/My Drive/MS-Physics/ML-DFT/NequIP/"
     
     checkpoints_dir = os.path.join(basedir, "checkpoints")
     if not os.path.exists(checkpoints_dir):
@@ -110,6 +110,8 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description='Train NequIP model.')
+    parser.add_argument('--basedir', default="/content/drive/My Drive/MS-Physics/ML-DFT/NequIP/",
+                       type=str, help='Base directory for data and checkpoints.')
     parser.add_argument('--finetune', default=False, type=bool, help='Fine-tune from a ' \
     'pre-trained model.')
     parser.add_argument('--batch_size', default=32, type=int, help='Batch size for training.')
@@ -118,4 +120,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
 
-    train(finetune=args.finetune, batch_size=args.batch_size, checkpoint_ft=args.checkpoint_ft)
+    train(args.basedir, finetune=args.finetune, batch_size=args.batch_size,
+          checkpoint_ft=args.checkpoint_ft)

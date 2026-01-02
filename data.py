@@ -15,9 +15,9 @@ from torch.utils.data import random_split
 ATOM_Z = {'H': 1, 'C': 6, 'N': 7, 'O': 8, 'F': 9}
 
 
-def getdata(mini=True, batch_size=32):
+def getdata(basedir, mini=True, batch_size=32):
 
-    dataset_path = "./Data/md17_aspirin.npz"
+    dataset_path = f"{basedir}/Data/md17_aspirin.npz"
 
     dataset = np.load(dataset_path)
 
