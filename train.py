@@ -58,7 +58,7 @@ def train(basedir = "/content/drive/My Drive/MS-Physics/ML-DFT/NequIP/", finetun
     # --- PLACE THIS BEFORE YOUR TRAINING LOOP ---
     initialize_shift_scale(model, trainloader)
 
-    device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
+    device = torch.device('cuda' if torch.backends.mps.is_available() else 'cpu')
     print(f"Using device: {device}")
     model = model.to(device)
 
