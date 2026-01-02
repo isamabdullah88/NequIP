@@ -30,10 +30,11 @@ def criterion(energy, forces, data):
 
     return losstot
 
-def train(finetune=False):
+def train(finetune=False, batch_size=32):
     import time
 
-    trainloader, valloader, _ = getdata(mini=False, batch_size=32)
+    trainloader, valloader, _ = getdata(mini=False, batch_size=batch_size)
+    trainsize = int(len(trainloader.dataset) / batch_size)
     print('Data loaded')
     
     writer = SummaryWriter()
@@ -41,8 +42,8 @@ def train(finetune=False):
         os.makedirs("checkpoints")
 
     if finetune:
-        checkpoint_path = "checkpoints-fulldataset-train4/model_E312.pt"
-        model = loadmodel(checkpoint_path, numatoms, atomembdim, dfeatdim)
+        checkpoint_path = "checkpoints-fulldataset/model_E0.pt"
+        model = loadmodel(checkpoint_path)
         print(f"Loaded model from {checkpoint_path} for finetuning.")
     else:
         model = NequIP()
@@ -81,7 +82,7 @@ def train(finetune=False):
             loss.backward()
             optimizer.step()
 
-            writer.add_scalar('Batch-Loss/train', loss.item(), epoch+k)
+            writer.add_scalar('Batch-Loss/train', loss.item(), trainsize*epoch + k)
             
         # --- save model every 10 epochs ---
         if epoch % 1 == 0:
@@ -100,4 +101,12 @@ def train(finetune=False):
 
 
 if __name__ == "__main__":
-    train(finetune=False)
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Train NequIP model.')
+    parser.add_argument('--finetune', default=False, type=bool, help='Fine-tune from a pre-trained model.')
+    parser.add_argument('--batch_size', default=32, type=int, help='Batch size for training.')
+    args = parser.parse_args()
+
+
+    train(finetune=args.finetune, batch_size=args.batch_size)
