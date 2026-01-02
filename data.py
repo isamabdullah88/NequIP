@@ -16,10 +16,10 @@ from torch.utils.data import random_split
 ATOM_Z = {'H': 1, 'C': 6, 'N': 7, 'O': 8, 'F': 9}
 
 
-def getdata(basedir, mini=True, batch_size=32):
+def getdata(data_dir, mini=True, batch_size=32):
 
-    cache_path = f"{basedir}/Data/md17_aspirin_processed.pt"
-    dataset_path = f"{basedir}/Data/md17_aspirin.npz"
+    cache_path = os.path.join(data_dir, "md17_aspirin_processed.pt")
+    dataset_path = os.path.join(data_dir, "md17_aspirin.npz")
 
     if os.path.exists(cache_path):
         print("Loading cached dataset...")
