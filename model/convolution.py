@@ -39,8 +39,9 @@ class Radial(nn.Module):
 
         
 class Convolution(nn.Module):
-    def __init__(self, l0dim, l1dim, l2dim, numbasis=10, rcut=5.0):
+    def __init__(self, l0dim, l1dim, l2dim, numbasis=10, rcut=5.0, mps=True):
         super(Convolution, self).__init__()
+        self.mps = mps
 
         in_irreps = o3.Irreps(f"{l0dim}x0e + {l1dim}x1o + {l2dim}x2e")
         # print('in irreps:', in_irreps)
@@ -58,18 +59,18 @@ class Convolution(nn.Module):
         )
 
         numweights = self.tp.weight_numel
-        # print("Number of weights in TP:", numweights)
         self.radialMLP = Radial(self.numbasis, numweights, self.rcut)
 
-        # self.linear = o3.Linear(o3.Irreps(in_irreps), o3.Irreps(in_irreps))
 
     def forward(self, nodes, pos, batch):
 
-        edgeidxs = radius_graph(pos, r=self.rcut, batch=batch, max_num_neighbors=100)
+        if self.mps:
+            edgeidxs = radius_graph(pos.cpu(), r=self.rcut, batch=batch.cpu(), max_num_neighbors=100).to("mps")
+        else:
+            edgeidxs = radius_graph(pos, r=self.rcut, batch=batch, max_num_neighbors=100)
 
         src, dst = edgeidxs
 
-        # print('nodes shape:', nodes.shape)
         neighbors = nodes[src]
 
         posvec = pos[src] - pos[dst]
@@ -79,10 +80,6 @@ class Convolution(nn.Module):
         radial = self.radialMLP(dist)
 
         ylm = o3.spherical_harmonics(l=[0, 1, 2], x=posvec, normalize=True, normalization='component')
-
-        # print('neighbors shape:', neighbors.shape)
-        # print("Ylm shape:", ylm.shape)
-        # print("Radial shape:", radial.shape)
 
         messages = self.tp(neighbors, ylm, weight=radial)
 

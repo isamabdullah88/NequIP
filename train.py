@@ -30,20 +30,20 @@ def criterion(energy, forces, data):
 
     return losstot
 
-def train(basedir = "/content/drive/My Drive/MS-Physics/ML-DFT/NequIP/", finetune=False, 
+def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics/ML-DFT/NequIP/", finetune=False, 
           batch_size=32, checkpoint_ft='model_E0.pth'):
     
     import time
 
-    trainloader, valloader, _ = getdata(basedir, mini=False, batch_size=batch_size)
+    trainloader, valloader, _ = getdata(data_dir, mini=False, batch_size=batch_size)
     trainsize = int(len(trainloader.dataset) / batch_size)
     print('Data loaded')
     
-    checkpoints_dir = os.path.join(basedir, "checkpoints")
+    checkpoints_dir = os.path.join(results_dir, "checkpoints")
     if not os.path.exists(checkpoints_dir):
         os.makedirs(checkpoints_dir)
 
-    log_dir = os.path.join(basedir, "runs")
+    log_dir = os.path.join(results_dir, "runs")
 
     writer = SummaryWriter(log_dir=log_dir)
 
@@ -110,8 +110,10 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description='Train NequIP model.')
-    parser.add_argument('--basedir', default="/content/drive/My Drive/MS-Physics/ML-DFT/NequIP/",
-                       type=str, help='Base directory for data and checkpoints.')
+    parser.add_argument('--data_dir', default="/content/drive/My Drive/MS-Physics/ML-DFT/NequIP/Data",
+                       type=str, help='Base directory for data.')
+    parser.add_argument('--results_dir', default="/content/drive/My Drive/MS-Physics/ML-DFT/NequIP/",
+                       type=str, help='Base directory for checkpoints.')
     parser.add_argument('--finetune', default=False, type=bool, help='Fine-tune from a ' \
     'pre-trained model.')
     parser.add_argument('--batch_size', default=32, type=int, help='Batch size for training.')
@@ -120,5 +122,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
 
-    train(args.basedir, finetune=args.finetune, batch_size=args.batch_size,
+    train(args.data_dir, args.results_dir, finetune=args.finetune, batch_size=args.batch_size,
           checkpoint_ft=args.checkpoint_ft)

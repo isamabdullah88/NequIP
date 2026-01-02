@@ -5,6 +5,7 @@ Parse QM9 .xyz files into PyTorch Geometric Data objects.
 Author: Isam Balghari
 """
 
+import os
 import torch
 import numpy as np
 from torch_geometric.loader import DataLoader
@@ -17,8 +18,17 @@ ATOM_Z = {'H': 1, 'C': 6, 'N': 7, 'O': 8, 'F': 9}
 
 def getdata(basedir, mini=True, batch_size=32):
 
+    cache_path = f"{basedir}/Data/md17_aspirin_processed.pt"
     dataset_path = f"{basedir}/Data/md17_aspirin.npz"
 
+    if os.path.exists(cache_path):
+        print("Loading cached dataset...")
+        dataset = torch.load(cache_path)
+        trainloader = DataLoader(dataset['train'], batch_size=batch_size, shuffle=True)
+        valloader = DataLoader(dataset['val'], batch_size=batch_size, shuffle=False)
+        testloader = DataLoader(dataset['test'], batch_size=batch_size, shuffle=False)
+        return trainloader, valloader, testloader
+    
     dataset = np.load(dataset_path)
 
     sizeidx = 211762
@@ -33,7 +43,14 @@ def getdata(basedir, mini=True, batch_size=32):
     
         datapt = Data(z=z, pos=pos[i], y=E[i], forces=F[i])
 
+        if i% 10000 == 0:
+            print(f"Processed {i} data points")
+
         dataset_list.append(datapt)
+
+    # Save processed dataset to cache
+    torch.save(dataset_list, cache_path)
+    print(f"Saved processed dataset to {cache_path}")
 
     trsize = int(0.8 * sizeidx)
     vsize = int(0.1 * sizeidx)
