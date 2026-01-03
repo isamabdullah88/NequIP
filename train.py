@@ -84,9 +84,8 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
     else:
         model = NequIP(mps=mps)
         print("Initialized new model for training.")
-
-    # --- PLACE THIS BEFORE YOUR TRAINING LOOP ---
-    model = initialize_shift_scale(model, trainloader)
+        # --- PLACE THIS BEFORE YOUR TRAINING LOOP ---
+        model = initialize_shift_scale(model, trainloader)
 
     if mps:
         device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
