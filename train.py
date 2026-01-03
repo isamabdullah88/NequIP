@@ -48,6 +48,7 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
     log_dir = os.path.join(results_dir, "runs")
 
     writer = SummaryWriter()
+    f = open('training-logs.txt', 'w')
 
     if kaggle:
         from kaggle_secrets import UserSecretsClient
@@ -123,7 +124,9 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
             # savefig(predictions, targets, epoch)
             savecheckpoint(checkpoints_dir, epoch, model, optimizer, loss)
 
-            print(f"Epoch [{epoch+1}/{epochs}], Loss: {loss.item():.4f}, Time Taken: {(time.time()-stime): .01f}")
+            line = f"Epoch [{epoch+1}/{epochs}], Loss: {loss.item():.4f}, Time Taken: {(time.time()-stime): .01f}\n" 
+            print(line)
+            f.write(line)
 
 
             mae_energy, mae_force = evaluate(model, valloader, device=device)
