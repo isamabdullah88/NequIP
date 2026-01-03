@@ -32,36 +32,65 @@ def loadmodel(checkpoint_path, mps):
 #     plt.close()
 
 def initialize_shift_scale(model, data_loader):
-    print("Auto-initializing shift/scale from first batch...")
+    print("--> Auto-initializing shift/scale from FULL dataset...")
     
-    # 1. Grab just ONE batch of data
-    batch = next(iter(data_loader))
-    # batch = batch.to(next(model.parameters()).device)
+    # Get the device of the model to ensure tensors match
+    device = next(model.parameters()).device
     
-    # 2. Count atoms in this batch
-    # (Same logic: A * shift = y)
-    num_species = model.output_block.shift.shape[0]
-    A = torch.zeros(batch.num_graphs, num_species)
-    one_hot = torch.nn.functional.one_hot(batch.z, num_species).float()
-    A.index_add_(0, batch.batch, one_hot)
+    # 1. Accumulate A and y lists
+    A_list = []
+    y_list = []
     
-    y = batch.y
+    # We loop over the loader without gradients to save memory
+    with torch.no_grad():
+        for batch in tqdm(data_loader, desc="Scanning dataset"):
+            batch = batch.to(device)
+            
+            # --- Build A Matrix for this batch ---
+            # A[i, j] = count of atom type j in graph i
+            num_species = model.output_block.shift.shape[0]
+            num_graphs = batch.num_graphs
+            
+            # Create a local A matrix for this batch: [Batch_Size, Num_Species]
+            A_batch = torch.zeros(num_graphs, num_species, device=device)
+            
+            # One-hot encode atom types (z)
+            # shape: [Total_Atoms_In_Batch, Num_Species]
+            one_hot = torch.nn.functional.one_hot(batch.z, num_species).float()
+            
+            # Sum atoms into their respective graphs
+            # batch.batch maps each atom to its graph index (0, 0, 0, 1, 1, ...)
+            A_batch.index_add_(0, batch.batch, one_hot)
+            
+            # --- Store ---
+            A_list.append(A_batch)
+            y_list.append(batch.y)
+            
+    # 2. Concatenate into one giant system of linear equations
+    # Shape: [Total_Dataset_Size, Num_Species]
+    A_full = torch.cat(A_list, dim=0)
+    y_full = torch.cat(y_list, dim=0)
     
-    # 3. Quick Least Squares Guess
-    # This solves: Energy_Total = N_Carbon * E_Carbon + N_Hydrogen * E_Hydrogen ...
+    print(f"--> Solving Linear System for {A_full.shape[0]} structures...")
+    
+    # 3. Solve Least Squares (Ax = y)
+    # This finds the "Average Energy per Atom" for each species globally
     try:
-        guess_shifts = torch.linalg.lstsq(A, y).solution.flatten()
-    except:
-        # Fallback for very small batches
-        guess_shifts = torch.ones(num_species) * torch.mean(y) / torch.mean(A.sum(1))
-
-    # 4. Force the model to start here
-    # We update the .data directly so the optimizer sees this as the starting point
-    model.output_block.shift.data = guess_shifts
-    
-    # Optional: Set scale to roughly the variance (usually 1.0 is fine to start)
-    # But shift is the critical one for the 10^11 problem.
-    print(f"Initialized Shifts to: {guess_shifts}")
+        # lstsq returns (solution, residuals, rank, singular_values)
+        solution = torch.linalg.lstsq(A_full, y_full).solution.flatten()
+        
+        # 4. Update the Model
+        model.output_block.shift.data = solution
+        print(f"--> Success! Initialized shifts: {solution}")
+        
+    except Exception as e:
+        print(f"--> LSTSQ Failed: {e}")
+        print("--> Fallback: Using Mean Energy / Mean Atoms")
+        # Simple fallback: Mean Energy / Mean Number of Atoms
+        mean_energy = torch.mean(y_full)
+        mean_atoms = torch.mean(A_full.sum(dim=1))
+        fallback_value = mean_energy / mean_atoms
+        model.output_block.shift.data = torch.ones(num_species, device=device) * fallback_value
 
 
 
