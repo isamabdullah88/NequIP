@@ -120,7 +120,7 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
             
             
         # --- save model every 10 epochs ---
-        if epoch % 1 == 0:
+        if epoch % 10 == 0:
             # savefig(predictions, targets, epoch)
             savecheckpoint(checkpoints_dir, epoch, model, optimizer, loss)
 
@@ -136,6 +136,8 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
             if kaggle:
                 wandb.log({
                     "train_loss": loss,
+                    "MAE_Energy/val": mae_energy,
+                    "MAE_Force/val": mae_force,
                     "epoch": epoch,
                     "learning_rate": optimizer.param_groups[0]['lr']
                 })
