@@ -28,7 +28,7 @@ class NequIP(nn.Module):
     def __init__(self, mps=False):
         super(NequIP, self).__init__()
         
-        self.l0dim = 16
+        self.l0dim = 32
         self.l1dim: int = 8
         self.l2dim: int = 4
 
@@ -46,7 +46,9 @@ class NequIP(nn.Module):
 
         interacted2 = self.interaction_block(interacted1, pos, batch)
 
-        output = self.output_block(interacted2, z)
+        interacted3 = self.interaction_block(interacted2, pos, batch)
+
+        output = self.output_block(interacted3, z)
         # print('output shape:', output.shape)
 
         energyt = global_add_pool(output, batch)
