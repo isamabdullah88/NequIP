@@ -139,7 +139,7 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
                     "epoch": epoch,
                     "learning_rate": optimizer.param_groups[0]['lr']
                 })
-                wandb.save(f"model_E{epoch}.pt")
+                wandb.save(os.path.join(checkpoints_dir, f"model_E{epoch}.pt"))
             
             
 
@@ -166,4 +166,4 @@ if __name__ == "__main__":
 
 
     train(args.data_dir, args.results_dir, finetune=args.finetune, batch_size=args.batch_size,
-          checkpoint_ft=args.checkpoint_ft, mps=args.mps)
+          checkpoint_ft=args.checkpoint_ft, mps=args.mps, kaggle=args.kaggle)
