@@ -1,5 +1,6 @@
 import os
 import torch
+import numpy as np
 from model import NequIP
 
 def loadmodel(checkpoint_path, mps):
@@ -31,48 +32,44 @@ def loadmodel(checkpoint_path, mps):
 #     plt.savefig(f"Figures/pred_vs_true_epoch-{epoch}.png")
 #     plt.close()
 
+
+
 def initialize_shift_scale(model, data_loader):
-    print("--> Auto-initializing shift/scale...")
+    print("--> Auto-initializing shift/scale (NumPy Mode)...")
     
     # Get the device where the model lives (cuda, mps, or cpu)
     model_device = next(model.parameters()).device
     num_species = model.output_block.shift.shape[0]
     
     # Define Map: Aspirin (H=1, C=6, O=8) -> (0, 1, 2)
-    # Add more if you have N(7), etc.
-    z_map = {1: 0, 6: 1, 7: 2, 8: 2} # Adjust '8' to '2' or '3' based on your species count!
+    # This prevents the "All Zeros" bug
+    z_map = {1: 0, 6: 1, 7: 2, 8: 2} # Adjust '8' to 2 or 3 based on your model!
     
     A_list = []
     y_list = []
     
     with torch.no_grad():
         for batch in data_loader:
-            # Force to CPU for safe math
+            # Move to CPU for safe processing
             batch = batch.cpu()
             
-            # --- SMART MAPPING LOGIC ---
-            # Check if data is already indices (0, 1, 2) or Atomic nums (1, 6, 8)
+            # --- 1. Map Atoms ---
             z_values = batch.z
-            
-            # If the max value in z is small (e.g., < 3), it's likely already indices.
             if z_values.max() < num_species:
-                mapped_z = z_values.long() # No map needed
+                mapped_z = z_values.long() # Already indices
             else:
-                # It has big numbers (1, 6, 8), so we MUST map
                 try:
                     mapped_z = torch.tensor([z_map.get(int(z), -1) for z in z_values])
                 except:
                     print("Error in mapping loop.")
                     return model
                 
-                # Check for failure (unmapped atoms)
                 if (mapped_z == -1).any():
-                    invalid_atom = z_values[mapped_z == -1][0].item()
-                    print(f"!!! Error: Dataset contains Atom Type '{invalid_atom}' which is not in z_map.")
-                    print(f"!!! Please update z_map in the code.")
+                    invalid = z_values[mapped_z == -1][0].item()
+                    print(f"!!! Error: Atom Type '{invalid}' not found in z_map.")
                     return model
 
-            # --- Build Matrix ---
+            # --- 2. Build Matrix (PyTorch CPU) ---
             one_hot = torch.nn.functional.one_hot(mapped_z, num_species).float()
             A_batch = torch.zeros(batch.num_graphs, num_species)
             A_batch.index_add_(0, batch.batch, one_hot)
@@ -80,25 +77,33 @@ def initialize_shift_scale(model, data_loader):
             A_list.append(A_batch)
             y_list.append(batch.y)
 
-    # Solve on CPU
-    A_full = torch.cat(A_list, dim=0)
-    y_full = torch.cat(y_list, dim=0)
+    # --- 3. Solve with NumPy (The Robust Part) ---
+    # Convert large tensors to NumPy arrays
+    A_full = torch.cat(A_list, dim=0).numpy()
+    y_full = torch.cat(y_list, dim=0).numpy()
     
-    print(f"--> Solving for {len(y_full)} structures on CPU...")
+    print(f"--> Solving for {len(y_full)} structures using NumPy...")
     
     try:
-        # 'gels' is the most robust driver for CPU
-        solution = torch.linalg.lstsq(A_full, y_full, driver="gels").solution.flatten()
+        # NumPy's lstsq is extremely stable
+        # rcond=None lets it determine the machine precision cut-off automatically
+        solution, residuals, rank, s = np.linalg.lstsq(A_full, y_full, rcond=None)
+        
+        # Select just the solution (first item) and flatten
+        solution = solution.flatten()
         print(f"--> Success! Shifts: {solution}")
         
-        # Move result to the correct device (MPS/CUDA)
-        model.output_block.shift.data = solution.to(model_device)
+        # --- 4. Move result back to PyTorch & GPU ---
+        solution_tensor = torch.from_numpy(solution).float().to(model_device)
+        model.output_block.shift.data = solution_tensor
         
     except Exception as e:
-        print(f"--> Solver Failed: {e}")
-        # Fallback
-        mean_val = y_full.mean() / A_full.sum(1).mean()
-        model.output_block.shift.data = torch.ones(num_species, device=model_device) * mean_val
+        print(f"--> NumPy Solver Failed: {e}")
+        # Fallback: Mean Energy / Mean Atoms
+        mean_val = np.mean(y_full) / np.mean(np.sum(A_full, axis=1))
+        fallback = torch.ones(num_species, device=model_device) * float(mean_val)
+        model.output_block.shift.data = fallback
+        print(f"--> Used Fallback Mean: {mean_val}")
 
     return model
 
