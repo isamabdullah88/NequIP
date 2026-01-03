@@ -109,8 +109,7 @@ def initialize_shift_scale(model, data_loader):
 
 
 
-def savecheckpoint(checkpoints_dir, epoch, model, optimizer, loss):
-    checkpoint_path = os.path.join(checkpoints_dir, f"model_E{epoch}.pt")
+def savecheckpoint(checkpoint_path, epoch, model, optimizer, loss):
     torch.save({
         "epoch": epoch,
         "model_state_dict": model.state_dict(),
