@@ -74,7 +74,7 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
 
     if finetune:
         if kaggle:
-            restored_ckpt = wandb.restore('model_E990.pt', run_path="isamabdullah88-lahore-university-of-management-sciences/Thesis_NequIP_Aspirin/22bm6hom")
+            restored_ckpt = wandb.restore('results/checkpoints/model_E990.pt', run_path="isamabdullah88-lahore-university-of-management-sciences/Thesis_NequIP_Aspirin/22bm6hom")
             checkpoint_path = restored_ckpt.name
         else:
             checkpoint_path = os.path.join(checkpoints_dir, checkpoint_ft)
