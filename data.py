@@ -49,8 +49,8 @@ def getdata(data_dir, mini=True, batch_size=32):
         dataset_list.append(datapt)
 
     # Save processed dataset to cache
-    torch.save(dataset_list, cache_path)
-    print(f"Saved processed dataset to {cache_path}")
+    # torch.save(dataset_list, cache_path)
+    # print(f"Saved processed dataset to {cache_path}")
 
     trsize = 1000
     vsize = 1000
