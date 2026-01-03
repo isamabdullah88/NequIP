@@ -32,65 +32,57 @@ def loadmodel(checkpoint_path, mps):
 #     plt.close()
 
 def initialize_shift_scale(model, data_loader):
-    print("--> Auto-initializing shift/scale from FULL dataset...")
+    print("--> Initializing shifts (CPU Mode)...")
     
-    # Get the device of the model to ensure tensors match
-    device = next(model.parameters()).device
+    A_list, y_list = [], []
     
-    # 1. Accumulate A and y lists
-    A_list = []
-    y_list = []
-    
-    # We loop over the loader without gradients to save memory
+    # Define Map: Aspirin has H=1, C=6, O=8 -> convert to indices 0, 1, 2
+    # If you use a different molecule, update this map!
+    z_map = {1: 0, 6: 1, 8: 2}
+
     with torch.no_grad():
         for batch in data_loader:
-            batch = batch.to(device)
+            # 1. Force everything to CPU (Fixes CUDA solver errors)
+            batch = batch.cpu()
             
-            # --- Build A Matrix for this batch ---
-            # A[i, j] = count of atom type j in graph i
-            num_species = model.output_block.shift.shape[0]
-            num_graphs = batch.num_graphs
+            # 2. Fix the "Index Mismatch" bug
+            # Maps [1, 6, 8] to [0, 1, 2] so one_hot works correctly
+            try:
+                mapped_z = torch.tensor([z_map[int(z)] for z in batch.z])
+            except KeyError as e:
+                print(f"Error: Unknown atom type {e}. Update z_map!")
+                return
             
-            # Create a local A matrix for this batch: [Batch_Size, Num_Species]
-            A_batch = torch.zeros(num_graphs, num_species, device=device)
+            # 3. Build Linear System (Ax = y)
+            num_species = 3  # H, C, O
+            one_hot = torch.nn.functional.one_hot(mapped_z, num_species).float()
             
-            # One-hot encode atom types (z)
-            # shape: [Total_Atoms_In_Batch, Num_Species]
-            one_hot = torch.nn.functional.one_hot(batch.z, num_species).float()
-            
-            # Sum atoms into their respective graphs
-            # batch.batch maps each atom to its graph index (0, 0, 0, 1, 1, ...)
+            # Count atoms per graph
+            A_batch = torch.zeros(batch.num_graphs, num_species)
             A_batch.index_add_(0, batch.batch, one_hot)
             
-            # --- Store ---
             A_list.append(A_batch)
             y_list.append(batch.y)
-            
-    # 2. Concatenate into one giant system of linear equations
-    # Shape: [Total_Dataset_Size, Num_Species]
+
+    # 4. Solve on CPU
     A_full = torch.cat(A_list, dim=0)
     y_full = torch.cat(y_list, dim=0)
     
-    print(f"--> Solving Linear System for {A_full.shape[0]} structures...")
+    print(f"--> Solving for {len(y_full)} structures...")
     
-    # 3. Solve Least Squares (Ax = y)
-    # This finds the "Average Energy per Atom" for each species globally
     try:
-        # lstsq returns (solution, residuals, rank, singular_values)
-        solution = torch.linalg.lstsq(A_full, y_full).solution.flatten()
+        # 'gels' driver is very stable on CPU
+        solution = torch.linalg.lstsq(A_full, y_full, driver="gels").solution.flatten()
+        print(f"--> Success! Shifts: {solution}")
         
-        # 4. Update the Model
-        model.output_block.shift.data = solution
-        print(f"--> Success! Initialized shifts: {solution}")
+        # Move result back to GPU for the model
+        device = next(model.parameters()).device
+        model.output_block.shift.data = solution.to(device)
         
     except Exception as e:
-        print(f"--> LSTSQ Failed: {e}")
-        print("--> Fallback: Using Mean Energy / Mean Atoms")
-        # Simple fallback: Mean Energy / Mean Number of Atoms
-        mean_energy = torch.mean(y_full)
-        mean_atoms = torch.mean(A_full.sum(dim=1))
-        fallback_value = mean_energy / mean_atoms
-        model.output_block.shift.data = torch.ones(num_species, device=device) * fallback_value
+        print(f"--> Solver Failed: {e}")
+
+    return model
 
 
 
