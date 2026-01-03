@@ -52,12 +52,14 @@ def getdata(data_dir, mini=True, batch_size=32):
     torch.save(dataset_list, cache_path)
     print(f"Saved processed dataset to {cache_path}")
 
-    trsize = int(0.8 * sizeidx)
-    vsize = int(0.1 * sizeidx)
+    trsize = 5000
+    vsize = 5000
     ttsize = sizeidx - trsize - vsize
 
+    generator = torch.Generator().manual_seed(42)
+
     train_list, val_list, test_list = random_split(dataset_list, [trsize, vsize, ttsize],
-                               generator=torch.Generator().manual_seed(42))
+                               generator=generator)
     print('train_list: ', len(train_list))
     print('val_list: ', len(val_list))
     print('test_list: ', len(test_list))
