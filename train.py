@@ -73,8 +73,13 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
         )
 
     if finetune:
-        checkpoint_path = os.path.join(checkpoints_dir, checkpoint_ft)
-        model = loadmodel(checkpoint_path, mps)
+        if kaggle:
+            restored_ckpt = wandb.restore('model_E990.pt', run_path="isamabdullah88-lahore-university-of-management-sciences/Thesis_NequIP_Aspirin/22bm6hom")
+            checkpoint_path = restored_ckpt.name
+        else:
+            checkpoint_path = os.path.join(checkpoints_dir, checkpoint_ft)
+        
+        model = loadmodel(checkpoint_path, args.mps)
         print(f"Loaded model from {checkpoint_path} for finetuning.")
     else:
         model = NequIP(mps=mps)
@@ -121,8 +126,12 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
             
         # --- save model every 10 epochs ---
         if epoch % 10 == 0:
-            # savefig(predictions, targets, epoch)
-            savecheckpoint(checkpoints_dir, epoch, model, optimizer, loss)
+            
+            checkpoint_path = os.path.join(checkpoints_dir, f"model_E{epoch}.pt")
+            savecheckpoint(checkpoint_path, epoch, model, optimizer, loss)
+
+            latest_ckpath = os.path.join(checkpoints_dir, "latest-model.pt")
+            savecheckpoint(latest_ckpath, epoch, model, optimizer, loss)
 
             line = f"Epoch [{epoch+1}/{epochs}], Loss: {loss.item():.4f}, Time Taken: {(time.time()-stime): .01f}\n" 
             print(line)
@@ -141,7 +150,8 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
                     "epoch": epoch,
                     "learning_rate": optimizer.param_groups[0]['lr']
                 })
-                wandb.save(os.path.join(checkpoints_dir, f"model_E{epoch}.pt"))
+                wandb.save(checkpoint_path)
+                wandb.save(latest_ckpath)
             
             
 
