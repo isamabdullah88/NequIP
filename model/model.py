@@ -25,7 +25,7 @@ def force(energy, pos):
 
 
 class NequIP(nn.Module):
-    def __init__(self):
+    def __init__(self, mps=False):
         super(NequIP, self).__init__()
         
         self.l0dim = 16
@@ -34,7 +34,7 @@ class NequIP(nn.Module):
 
         self.atomembeds = AtomEmbedding(self.l0dim, self.l1dim, self.l2dim)
 
-        self.interaction_block = InteractionBlock(self.l0dim, self.l1dim, self.l2dim)
+        self.interaction_block = InteractionBlock(self.l0dim, self.l1dim, self.l2dim, mps=mps)
 
         self.output_block = OutputBlock(self.l0dim, self.l1dim, self.l2dim)
 

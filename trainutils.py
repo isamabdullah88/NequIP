@@ -2,9 +2,9 @@ import os
 import torch
 from model import NequIP
 
-def loadmodel(checkpoint_path):
+def loadmodel(checkpoint_path, mps):
     # Load model architecture
-    model = NequIP()
+    model = NequIP(mps=mps)
     checkpoint = torch.load(checkpoint_path, weights_only=True)
     model.load_state_dict(checkpoint["model_state_dict"])
     return model

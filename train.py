@@ -45,14 +45,14 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
 
     log_dir = os.path.join(results_dir, "runs")
 
-    writer = SummaryWriter(log_dir=log_dir)
+    writer = SummaryWriter()
 
     if finetune:
         checkpoint_path = os.path.join(checkpoints_dir, checkpoint_ft)
-        model = loadmodel(checkpoint_path)
+        model = loadmodel(checkpoint_path, mps)
         print(f"Loaded model from {checkpoint_path} for finetuning.")
     else:
-        model = NequIP()
+        model = NequIP(mps=mps)
         print("Initialized new model for training.")
 
     # --- PLACE THIS BEFORE YOUR TRAINING LOOP ---
