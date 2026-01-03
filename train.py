@@ -31,7 +31,7 @@ def criterion(energy, forces, data):
     return losstot
 
 def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics/ML-DFT/NequIP/", finetune=False, 
-          batch_size=32, checkpoint_ft='model_E0.pth', mps=False):
+          batch_size=32, checkpoint_ft='model_E0.pth', mps=False, kaggle=False):
     
     import time
 
@@ -39,6 +39,8 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
     trainsize = int(len(trainloader.dataset) / batch_size)
     print('Data loaded')
     
+
+
     checkpoints_dir = os.path.join(results_dir, "checkpoints")
     if not os.path.exists(checkpoints_dir):
         os.makedirs(checkpoints_dir)
@@ -46,6 +48,28 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
     log_dir = os.path.join(results_dir, "runs")
 
     writer = SummaryWriter()
+
+    if kaggle:
+        from kaggle_secrets import UserSecretsClient
+        import wandb
+        # --- 1. LOGIN SECURELY ---
+        user_secrets = UserSecretsClient()
+        secret_value = user_secrets.get_secret("wandb_key")
+        wandb.login(key=secret_value)
+
+        # --- 2. INITIALIZE RUN ---
+        # This creates a "project" on your dashboard
+        run = wandb.init(
+            project="Thesis_NequIP_Aspirin",
+            name="Run_01_5k_Samples", # Optional: Name this specific attempt
+            config={
+                "learning_rate": 0.005,
+                "batch_size": 32,
+                "max_epochs": 5000,
+                "architecture": "NequIP",
+                "dataset_size": 2000
+            }
+        )
 
     if finetune:
         checkpoint_path = os.path.join(checkpoints_dir, checkpoint_ft)
@@ -93,6 +117,7 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
 
             writer.add_scalar('Batch-Loss/train', loss.item(), trainsize*epoch + k)
             
+            
         # --- save model every 10 epochs ---
         if epoch % 1 == 0:
             # savefig(predictions, targets, epoch)
@@ -104,6 +129,15 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
             mae_energy, mae_force = evaluate(model, valloader, device=device)
             writer.add_scalar('MAE-Energy/val', mae_energy, epoch)
             writer.add_scalar('MAE-Force/val', mae_force, epoch)
+            
+            if kaggle:
+                wandb.log({
+                    "train_loss": loss,
+                    "epoch": epoch,
+                    "learning_rate": optimizer.param_groups[0]['lr']
+                })
+                wandb.save(f"model_E{epoch}.pt")
+            
             
 
     writer.close()
@@ -123,6 +157,8 @@ if __name__ == "__main__":
     parser.add_argument('--batch_size', default=32, type=int, help='Batch size for training.')
     parser.add_argument('--checkpoint_ft', default="model_E0.pt", type=str, help='Checkpoint to ' \
     'load from when finetuning')
+    parser.add_argument('--kaggle', default=False, type=bool, help='Specify if training is ' \
+    'running on kaggle so as to save on wandb')
     args = parser.parse_args()
 
 
