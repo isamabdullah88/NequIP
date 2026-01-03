@@ -21,13 +21,13 @@ def getdata(data_dir, mini=True, batch_size=32):
     cache_path = os.path.join(data_dir, "md17_aspirin_processed.pt")
     dataset_path = os.path.join(data_dir, "md17_aspirin.npz")
 
-    if os.path.exists(cache_path):
-        print("Loading cached dataset...")
-        dataset = torch.load(cache_path)
-        trainloader = DataLoader(dataset['train'], batch_size=batch_size, shuffle=True)
-        valloader = DataLoader(dataset['val'], batch_size=batch_size, shuffle=False)
-        testloader = DataLoader(dataset['test'], batch_size=batch_size, shuffle=False)
-        return trainloader, valloader, testloader
+    # if os.path.exists(cache_path):
+    #     print("Loading cached dataset...")
+    #     dataset = torch.load(cache_path)
+    #     trainloader = DataLoader(dataset['train'], batch_size=batch_size, shuffle=True)
+    #     valloader = DataLoader(dataset['val'], batch_size=batch_size, shuffle=False)
+    #     testloader = DataLoader(dataset['test'], batch_size=batch_size, shuffle=False)
+    #     return trainloader, valloader, testloader
     
     dataset = np.load(dataset_path)
 
@@ -52,8 +52,8 @@ def getdata(data_dir, mini=True, batch_size=32):
     torch.save(dataset_list, cache_path)
     print(f"Saved processed dataset to {cache_path}")
 
-    trsize = 5000
-    vsize = 5000
+    trsize = 1000
+    vsize = 1000
     ttsize = sizeidx - trsize - vsize
 
     generator = torch.Generator().manual_seed(42)
