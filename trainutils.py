@@ -43,7 +43,7 @@ def initialize_shift_scale(model, data_loader):
     
     # We loop over the loader without gradients to save memory
     with torch.no_grad():
-        for batch in tqdm(data_loader, desc="Scanning dataset"):
+        for batch in data_loader:
             batch = batch.to(device)
             
             # --- Build A Matrix for this batch ---
