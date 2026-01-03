@@ -32,55 +32,73 @@ def loadmodel(checkpoint_path, mps):
 #     plt.close()
 
 def initialize_shift_scale(model, data_loader):
-    print("--> Initializing shifts (CPU Mode)...")
+    print("--> Auto-initializing shift/scale...")
     
-    A_list, y_list = [], []
+    # Get the device where the model lives (cuda, mps, or cpu)
+    model_device = next(model.parameters()).device
+    num_species = model.output_block.shift.shape[0]
     
-    # Define Map: Aspirin has H=1, C=6, O=8 -> convert to indices 0, 1, 2
-    # If you use a different molecule, update this map!
-    z_map = {1: 0, 6: 1, 8: 2}
-
+    # Define Map: Aspirin (H=1, C=6, O=8) -> (0, 1, 2)
+    # Add more if you have N(7), etc.
+    z_map = {1: 0, 6: 1, 7: 2, 8: 2} # Adjust '8' to '2' or '3' based on your species count!
+    
+    A_list = []
+    y_list = []
+    
     with torch.no_grad():
         for batch in data_loader:
-            # 1. Force everything to CPU (Fixes CUDA solver errors)
+            # Force to CPU for safe math
             batch = batch.cpu()
             
-            # 2. Fix the "Index Mismatch" bug
-            # Maps [1, 6, 8] to [0, 1, 2] so one_hot works correctly
-            try:
-                mapped_z = torch.tensor([z_map[int(z)] for z in batch.z])
-            except KeyError as e:
-                print(f"Error: Unknown atom type {e}. Update z_map!")
-                return
+            # --- SMART MAPPING LOGIC ---
+            # Check if data is already indices (0, 1, 2) or Atomic nums (1, 6, 8)
+            z_values = batch.z
             
-            # 3. Build Linear System (Ax = y)
-            num_species = 3  # H, C, O
+            # If the max value in z is small (e.g., < 3), it's likely already indices.
+            if z_values.max() < num_species:
+                mapped_z = z_values.long() # No map needed
+            else:
+                # It has big numbers (1, 6, 8), so we MUST map
+                try:
+                    mapped_z = torch.tensor([z_map.get(int(z), -1) for z in z_values])
+                except:
+                    print("Error in mapping loop.")
+                    return model
+                
+                # Check for failure (unmapped atoms)
+                if (mapped_z == -1).any():
+                    invalid_atom = z_values[mapped_z == -1][0].item()
+                    print(f"!!! Error: Dataset contains Atom Type '{invalid_atom}' which is not in z_map.")
+                    print(f"!!! Please update z_map in the code.")
+                    return model
+
+            # --- Build Matrix ---
             one_hot = torch.nn.functional.one_hot(mapped_z, num_species).float()
-            
-            # Count atoms per graph
             A_batch = torch.zeros(batch.num_graphs, num_species)
             A_batch.index_add_(0, batch.batch, one_hot)
             
             A_list.append(A_batch)
             y_list.append(batch.y)
 
-    # 4. Solve on CPU
+    # Solve on CPU
     A_full = torch.cat(A_list, dim=0)
     y_full = torch.cat(y_list, dim=0)
     
-    print(f"--> Solving for {len(y_full)} structures...")
+    print(f"--> Solving for {len(y_full)} structures on CPU...")
     
     try:
-        # 'gels' driver is very stable on CPU
+        # 'gels' is the most robust driver for CPU
         solution = torch.linalg.lstsq(A_full, y_full, driver="gels").solution.flatten()
         print(f"--> Success! Shifts: {solution}")
         
-        # Move result back to GPU for the model
-        device = next(model.parameters()).device
-        model.output_block.shift.data = solution.to(device)
+        # Move result to the correct device (MPS/CUDA)
+        model.output_block.shift.data = solution.to(model_device)
         
     except Exception as e:
         print(f"--> Solver Failed: {e}")
+        # Fallback
+        mean_val = y_full.mean() / A_full.sum(1).mean()
+        model.output_block.shift.data = torch.ones(num_species, device=model_device) * mean_val
 
     return model
 
