@@ -81,7 +81,7 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
         print("Initialized new model for training.")
 
     # --- PLACE THIS BEFORE YOUR TRAINING LOOP ---
-    initialize_shift_scale(model, trainloader)
+    model = initialize_shift_scale(model, trainloader)
 
     if mps:
         device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
