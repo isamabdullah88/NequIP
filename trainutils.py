@@ -11,27 +11,24 @@ def loadmodel(checkpoint_path, mps):
     return model
 
 
+def count_parameters(model):
+    # Assuming your model is named 'model'
+# and your layers are stored in 'model.layers' or similar
+    # first_layer = model.atomembeds # Adjust if your list is named differently
+    
+    # params = sum(p.numel() for p in first_layer.parameters())
+    # print(f"--> Parameters in Layer 0: {params:,}")
 
-# def savefig(predictions, targets, epoch):
-#     predictions = torch.concatenate(predictions).cpu().detach()
-#     targets = torch.concatenate(targets).cpu().detach()
-
-#     predictions = predictions.view(-1)
-#     targets = targets.view(-1)
-#     import matplotlib.pyplot as plt
-#     plt.scatter(targets, predictions, s=10, alpha=0.7)
-#     plt.plot([targets.min(), targets.max()],
-#             [targets.min(), targets.max()],
-#             'r--', label='Perfect prediction')
-
-#     plt.xlabel("True Energy (eV)")
-#     plt.ylabel("Predicted Energy (eV)")
-#     plt.title("Predicted vs True Total Energy")
-#     plt.legend()
-#     # plt.show()
-#     plt.savefig(f"Figures/pred_vs_true_epoch-{epoch}.png")
-#     plt.close()
-
+    # 1. Total Parameters (Weights + Biases)
+    total_params = sum(p.numel() for p in model.parameters())
+    
+    # 2. Trainable Parameters (The ones optimizer actually updates)
+    # trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    
+    # print(f"Total Parameters:     {total_params:,}")
+    # print(f"Trainable Parameters: {trainable_params:,}")
+    
+    return total_params
 
 
 def initialize_shift_scale(model, data_loader):

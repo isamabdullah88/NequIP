@@ -6,6 +6,27 @@ from torch_geometric.nn import radius_graph
 from torch_geometric.utils import scatter
 
 
+def gen_instructions(irreps_in, irreps_edge, irreps_out):
+    instructions = []
+
+    # Iterate over all possible combinations
+    for i, (mul_in, ir_in) in enumerate(irreps_in):
+        for j, (mul_edge, ir_edge) in enumerate(irreps_edge):
+            for k, (mul_out, ir_out) in enumerate(irreps_out):
+                
+                # 1. Check Physics (Angular Momentum + Parity)
+                if ir_out in ir_in * ir_edge:
+                    
+                    # 2. Check if "Depthwise" is possible
+                    # 'uvu' requires the input channel count to match the output
+                    if mul_in == mul_out:
+                        # Valid Depthwise connection!
+                        instructions.append((i, j, k, 'uvu', True))
+
+    # print(f"Generated {len(instructions)} valid instructions.")
+    # print(instructions)
+    return instructions
+
 def ploynomial_cutoff(x, rcut):
 
     p = 6
@@ -16,19 +37,20 @@ def ploynomial_cutoff(x, rcut):
 
 
 class Radial(nn.Module):
-    def __init__(self, in_dim, out_dim, rcut):
+    def __init__(self, indim, outdim, rcut):
         super(Radial, self).__init__()
         self.rcut = rcut
-        self.numbasis = in_dim
+        self.numbasis = indim
 
         self.model = nn.Sequential(
-            nn.Linear(in_dim, out_dim),
-            nn.SiLU()
+            nn.Linear(indim, 64),
+            nn.SiLU(),
+            nn.Linear(64, outdim)
         )
 
     def forward(self, dist):
         bessel = emath.soft_one_hot_linspace(dist, 0.0, 5.0, self.numbasis, basis='bessel', cutoff=True)
-        # print("Bessel basis shape:", bessel.shape)
+
         distf = self.model(bessel)
 
         cutoff = ploynomial_cutoff(dist, self.rcut).unsqueeze(-1)
@@ -39,27 +61,37 @@ class Radial(nn.Module):
 
         
 class Convolution(nn.Module):
-    def __init__(self, l0dim, l1dim, l2dim, numbasis=10, rcut=5.0, mps=True):
+    def __init__(self, l0dim, l1dim, l2dim, numbasis=8, rcut=4.0, mps=True):
         super(Convolution, self).__init__()
         self.mps = mps
 
-        in_irreps = o3.Irreps(f"{l0dim}x0e + {l1dim}x1o + {l2dim}x2e")
-        # print('in irreps:', in_irreps)
         self.avg_neighbors = 25.0
         
         self.numbasis = numbasis
         self.rcut = rcut
 
-        self.tp = o3.FullyConnectedTensorProduct(
-            o3.Irreps(in_irreps),  # input features
-            o3.Irreps("1x0e + 1x1o + 1x2e"),   # spherical harmonics l=1
-            o3.Irreps(in_irreps),  # output features
-            shared_weights=False,
-            internal_weights=False
+        irreps_in1 = o3.Irreps(f"{l0dim}x0e + {l1dim}x1o + {l2dim}x2e")
+        irreps_in2 = o3.Irreps("1x0e + 1x1o + 1x2e")
+        irreps_out = o3.Irreps(f"{l0dim}x0e + {l1dim}x1o + {l2dim}x2e")
+        instructions = gen_instructions(irreps_in1, irreps_in2, irreps_out)
+
+        self.tp = o3.TensorProduct(
+            irreps_in1 = irreps_in1,  # input features
+            irreps_in2 = irreps_in2,   # spherical harmonics l=1
+            irreps_out = irreps_out,  # output features
+            instructions = instructions,
+            internal_weights = False,
+            shared_weights = False
         )
+
+        # print('TP: ', self.tp.weight_numel)
 
         numweights = self.tp.weight_numel
         self.radialMLP = Radial(self.numbasis, numweights, self.rcut)
+
+        total_params = sum(p.numel() for p in self.radialMLP.parameters())
+
+        # print(f"Total params in this Sequential block: {total_params:,}")
 
 
     def forward(self, nodes, pos, batch):
@@ -76,11 +108,15 @@ class Convolution(nn.Module):
         posvec = pos[src] - pos[dst]
 
         dist = posvec.norm(dim=1, keepdim=False)
+        # print('dist: ', dist.shape)
 
         radial = self.radialMLP(dist)
 
         ylm = o3.spherical_harmonics(l=[0, 1, 2], x=posvec, normalize=True, normalization='component')
 
+        # print('neighbours: ', neighbors.shape)
+        # print('ylm ', ylm.shape)
+        # print(f"ACTUAL weights provided: {radial.shape}")
         messages = self.tp(neighbors, ylm, weight=radial)
 
         aggregated = scatter(messages, dst, dim=0, reduce='add')
