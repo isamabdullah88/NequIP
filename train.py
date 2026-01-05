@@ -1,19 +1,16 @@
 
-from data import getdata
-from model import NequIP, force
 import os
+import time
 
 import torch
 import torch.optim as optim
 import torch.nn.functional as F
 from torch.utils.tensorboard import SummaryWriter
 
-from trainutils import loadmodel, initialize_shift_scale, savecheckpoint
+from data import getdata
+from model import NequIP, force
+from trainutils import loadmodel, initialize_shift_scale, savecheckpoint, count_parameters
 from test import evaluate
-
-
-# from evaluate import peratom_mse
-
 
 
 def criterion(energy, forces, data):
@@ -26,26 +23,19 @@ def criterion(energy, forces, data):
     wf = 100.0
 
     losstot = we * losse + wf * lossf
-    # print(f"Energy Loss: {losse.item():.6f}, Force Loss: {lossf.item():.6f}, Total Loss: {losstot.item():.6f}")
 
     return losstot
 
-def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics/ML-DFT/NequIP/", finetune=False, 
-          batch_size=32, checkpoint_ft='model_E0.pth', mps=False, kaggle=False):
-    
-    import time
+def train(data_dir, results_dir, finetune, batch_size, checkpoint_ft, mps=False, kaggle=False,
+          lr=1e-2):
 
     trainloader, valloader, _ = getdata(data_dir, mini=False, batch_size=batch_size)
     trainsize = int(len(trainloader.dataset) / batch_size)
     print('Data loaded')
     
-
-
     checkpoints_dir = os.path.join(results_dir, "checkpoints")
     if not os.path.exists(checkpoints_dir):
         os.makedirs(checkpoints_dir)
-
-    log_dir = os.path.join(results_dir, "runs")
 
     writer = SummaryWriter()
     f = open('training-logs.txt', 'w')
@@ -62,7 +52,7 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
         # This creates a "project" on your dashboard
         run = wandb.init(
             project="Thesis_NequIP_Aspirin",
-            name="Run_01_5k_Samples", # Optional: Name this specific attempt
+            name="Run_01_1k_Samples", # Optional: Name this specific attempt
             config={
                 "learning_rate": 0.005,
                 "batch_size": 32,
@@ -87,6 +77,8 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
         # --- PLACE THIS BEFORE YOUR TRAINING LOOP ---
         model = initialize_shift_scale(model, trainloader)
 
+    count_parameters(model)
+
     if mps:
         device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
     else:
@@ -94,7 +86,7 @@ def train(data_dir = "./Data", results_dir = "/content/drive/My Drive/MS-Physics
     print(f"Using device: {device}")
     model = model.to(device)
 
-    optimizer = optim.Adam(model.parameters(), lr=1e-2)
+    optimizer = optim.Adam(model.parameters(), lr=lr)
 
     epochs = 5000
 
