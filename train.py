@@ -77,7 +77,8 @@ def train(data_dir, results_dir, finetune, batch_size, checkpoint_ft, mps=False,
         # --- PLACE THIS BEFORE YOUR TRAINING LOOP ---
         model = initialize_shift_scale(model, trainloader)
 
-    count_parameters(model)
+    paramscount = count_parameters(model)
+    print(f"Total Parameters:     {paramscount:,}")
 
     if mps:
         device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
