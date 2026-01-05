@@ -10,8 +10,11 @@ class InteractionBlock(nn.Module):
 
         # self-interaction
         in_irreps = o3.Irreps(f"{l0dim}x0e + {l1dim}x1o + {l2dim}x2o")
-        self.owninteraction = o3.Linear(in_irreps, in_irreps)
+        self.owninteraction1 = o3.Linear(in_irreps, in_irreps)
 
+        self.owninteraction2 = o3.Linear(in_irreps, in_irreps)
+
+        # print('self-interaction: ', self.owninteraction1.weight.shape)
         # convolution
         self.convolution = Convolution(l0dim, l1dim, l2dim, mps=mps)
 
@@ -19,13 +22,12 @@ class InteractionBlock(nn.Module):
         self.gate = NonLinearGate(l0dim, l1dim, l2dim)
 
     def forward(self, nodes: torch.Tensor, pos: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:
-        self_interacted1 = self.owninteraction(nodes)
 
-        # print("Self-interacted features shape:", self_interacted1.shape)
+        self_interacted1 = self.owninteraction1(nodes)
 
         convolved = self.convolution(self_interacted1, pos, batch)
 
-        self_interacted2 = self.owninteraction(convolved)
+        self_interacted2 = self.owninteraction2(convolved)
 
         mixed = nodes + self_interacted2
 
