@@ -11,14 +11,8 @@ from .output import OutputBlock
 def force(energy, pos):
     ones = torch.ones_like(energy)
 
-    grads = torch.autograd.grad(
-        outputs=energy,
-        inputs=pos,
-        grad_outputs=ones,
-        create_graph=True,
-        retain_graph=True,
-        allow_unused=True
-    )[0]
+    grads = torch.autograd.grad(outputs=energy, inputs=pos, grad_outputs=ones, create_graph=True,
+                                retain_graph=True, allow_unused=True)[0]
 
     forces = -grads
     return forces
@@ -29,12 +23,20 @@ class NequIP(nn.Module):
         super(NequIP, self).__init__()
         
         self.l0dim = 32
-        self.l1dim: int = 8
-        self.l2dim: int = 4
+        self.l1dim: int = 32
+        self.l2dim: int = 32
 
         self.atomembeds = AtomEmbedding(self.l0dim, self.l1dim, self.l2dim)
 
-        self.interaction_block = InteractionBlock(self.l0dim, self.l1dim, self.l2dim, mps=mps)
+        self.interaction_block1 = InteractionBlock(self.l0dim, self.l1dim, self.l2dim, mps=mps)
+
+        self.interaction_block2 = InteractionBlock(self.l0dim, self.l1dim, self.l2dim, mps=mps)
+        
+        self.interaction_block3 = InteractionBlock(self.l0dim, self.l1dim, self.l2dim, mps=mps)
+
+        self.interaction_block4 = InteractionBlock(self.l0dim, self.l1dim, self.l2dim, mps=mps)
+
+        self.interaction_block5 = InteractionBlock(self.l0dim, self.l1dim, self.l2dim, mps=mps)
 
         self.output_block = OutputBlock(self.l0dim, self.l1dim, self.l2dim)
 
@@ -42,17 +44,19 @@ class NequIP(nn.Module):
 
         nodes = self.atomembeds(z)
 
-        interacted1 = self.interaction_block(nodes, pos, batch)
+        interacted1 = self.interaction_block1(nodes, pos, batch)
 
-        interacted2 = self.interaction_block(interacted1, pos, batch)
+        interacted2 = self.interaction_block2(interacted1, pos, batch)
 
-        interacted3 = self.interaction_block(interacted2, pos, batch)
+        interacted3 = self.interaction_block3(interacted2, pos, batch)
 
-        output = self.output_block(interacted3, z)
-        # print('output shape:', output.shape)
+        interacted4 = self.interaction_block4(interacted3, pos, batch)
+
+        interacted5 = self.interaction_block5(interacted4, pos, batch)
+
+        output = self.output_block(interacted5, z)
 
         energyt = global_add_pool(output, batch)
-        # print('energy shape:', energyt.shape)
 
         return energyt
     
