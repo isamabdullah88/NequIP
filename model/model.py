@@ -22,7 +22,7 @@ class NequIP(nn.Module):
     def __init__(self, mps=False):
         super(NequIP, self).__init__()
         
-        self.l0dim = 32
+        self.l0dim = 64
         self.l1dim: int = 32
         self.l2dim: int = 32
 
