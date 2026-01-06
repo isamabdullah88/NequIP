@@ -85,8 +85,6 @@ class Convolution(nn.Module):
             shared_weights = False
         )
 
-        # print('TP: ', self.tp.weight_numel)
-
         numweights = self.tp.weight_numel
         self.radialMLP = Radial(self.numbasis, numweights, self.rcut)
 
@@ -128,7 +126,7 @@ class Convolution(nn.Module):
 
         mscalars = messages[:, :self.l0dim]
 
-        refscalars = mscalars + self.mlp(mscalars)
+        refscalars = self.mlp(mscalars)
 
         messagesrf[:, :self.l0dim] = refscalars
 
