@@ -37,6 +37,8 @@ def train(data_dir, results_dir, finetune, batch_size, checkpoint_ft, mps=False,
     if not os.path.exists(checkpoints_dir):
         os.makedirs(checkpoints_dir)
 
+    epochs = 5000
+
     writer = SummaryWriter()
     f = open('training-logs.txt', 'w')
 
@@ -54,11 +56,11 @@ def train(data_dir, results_dir, finetune, batch_size, checkpoint_ft, mps=False,
             project="Thesis_NequIP_Aspirin",
             name="Run_01_1k_Samples", # Optional: Name this specific attempt
             config={
-                "learning_rate": 0.005,
-                "batch_size": 32,
-                "max_epochs": 5000,
+                "learning_rate": lr,
+                "batch_size": batch_size,
+                "max_epochs": epochs,
                 "architecture": "NequIP",
-                "dataset_size": 2000
+                "dataset_size": len(trainloader.dataset)
             }
         )
 
@@ -89,7 +91,6 @@ def train(data_dir, results_dir, finetune, batch_size, checkpoint_ft, mps=False,
 
     optimizer = optim.Adam(model.parameters(), lr=lr)
 
-    epochs = 5000
 
     model.train()
     
@@ -119,7 +120,7 @@ def train(data_dir, results_dir, finetune, batch_size, checkpoint_ft, mps=False,
         # --- save model every 10 epochs ---
         if epoch % 10 == 0:
             
-            checkpoint_path = os.path.join(checkpoints_dir, f"model_E{epoch}.pt")
+            checkpoint_path = os.path.join(checkpoints_dir, f"model_E{epoch:04d}.pt")
             savecheckpoint(checkpoint_path, epoch, model, optimizer, loss)
 
             latest_ckpath = os.path.join(checkpoints_dir, "latest-model.pt")
