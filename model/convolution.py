@@ -64,6 +64,7 @@ class Convolution(nn.Module):
     def __init__(self, l0dim, l1dim, l2dim, numbasis=8, rcut=4.0, mps=True):
         super(Convolution, self).__init__()
         self.mps = mps
+        self.l0dim = l0dim
 
         self.avg_neighbors = 25.0
         
@@ -88,6 +89,13 @@ class Convolution(nn.Module):
 
         numweights = self.tp.weight_numel
         self.radialMLP = Radial(self.numbasis, numweights, self.rcut)
+
+        self.linear = o3.Linear(irreps_out, irreps_out)
+
+        self.mlp = nn.Sequential(
+            nn.SiLU(),
+            nn.Linear(l0dim, l0dim)
+        )
 
         total_params = sum(p.numel() for p in self.radialMLP.parameters())
 
@@ -114,12 +122,17 @@ class Convolution(nn.Module):
 
         ylm = o3.spherical_harmonics(l=[0, 1, 2], x=posvec, normalize=True, normalization='component')
 
-        # print('neighbours: ', neighbors.shape)
-        # print('ylm ', ylm.shape)
-        # print(f"ACTUAL weights provided: {radial.shape}")
         messages = self.tp(neighbors, ylm, weight=radial)
 
-        aggregated = scatter(messages, dst, dim=0, reduce='add')
+        messagesrf = self.linear(messages)
+
+        mscalars = messages[:, :self.l0dim]
+
+        refscalars = mscalars + self.mlp(mscalars)
+
+        messagesrf[:, :self.l0dim] = refscalars
+
+        aggregated = scatter(messagesrf, dst, dim=0, reduce='add')
 
         aggregated = aggregated / (self.avg_neighbors**0.5)
 
