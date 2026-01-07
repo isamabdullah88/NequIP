@@ -13,8 +13,7 @@ from trainutils import loadmodel, initialize_shift_scale, count_parameters, save
 from test import evaluate
 
 
-def initwandb(lr, batch_size, epochs, dataset_size, project, runname):
-    from wandbkey import WANDB_KEY
+def initwandb(lr, batch_size, epochs, dataset_size, project, runname, WANDB_KEY):
     wandb.login(key=WANDB_KEY)
 
     # --- 2. INITIALIZE RUN ---
@@ -44,7 +43,7 @@ def criterion(energy, forces, data):
 
     return losstot
 
-def train(data_dir, finetune, batch_size, project, runname, mps=False, lr=1e-2, epochs=5000, ft_runname=""):
+def train(data_dir, finetune, batch_size, project, runname, mps=False, lr=1e-2, epochs=5000, ft_runname="", WANDB_KEY=""):
 
     trainloader, valloader, _ = getdata(data_dir, mini=False, batch_size=batch_size)
     trainsize = int(len(trainloader.dataset) / batch_size)
@@ -54,7 +53,7 @@ def train(data_dir, finetune, batch_size, project, runname, mps=False, lr=1e-2, 
     if not os.path.exists(checkpoints_dir):
         os.makedirs(checkpoints_dir)
     # Initialize wandb logging
-    initwandb(lr, batch_size, epochs, len(trainloader.dataset), project, runname)
+    initwandb(lr, batch_size, epochs, len(trainloader.dataset), project, runname, WANDB_KEY)
     f = open('training-logs.txt', 'w')
 
 
@@ -161,8 +160,10 @@ if __name__ == "__main__":
     parser.add_argument('--ft_runname', default="Run_00_FullData", type=str, help='WandB run name path of the model to fine-tune from.')
     parser.add_argument('--batch_size', default=32, type=int, help='Batch size for training.')
     parser.add_argument('--epochs', default=5000, type=int, help='Number of training epochs.')
+    parser.add_argument('--WANDB_KEY', default="", type=str, help='WandB API Key.')
     args = parser.parse_args()
 
 
     train(args.data_dir, finetune=args.finetune, batch_size=args.batch_size, project=args.project,
-          runname=args.runname, ft_runname=args.ft_runname, mps=args.mps, epochs=args.epochs)
+          runname=args.runname, ft_runname=args.ft_runname, mps=args.mps, epochs=args.epochs,
+          WANDB_KEY=args.WANDB_KEY)
