@@ -10,13 +10,13 @@ DATA_DOWNLOAD_URL="https://drive.google.com/uc?export=download&id=1LyzVyRgdE0H2E
 echo ">>> [1/6] System Update & Essentials..."
 apt-get update && apt-get install -y git wget unzip
 
-echo ">>> [2/6] Cloning Repository..."
-if [ -d "NequIP" ]; then
-    echo "Repo already exists, pulling latest changes..."
-    cd NequIP && git pull && cd ..
-else
-    git clone $REPO_URL
-fi
+# echo ">>> [2/6] Cloning Repository..."
+# if [ -d "NequIP" ]; then
+#     echo "Repo already exists, pulling latest changes..."
+#     cd NequIP && git pull && cd ..
+# else
+#     git clone $REPO_URL
+# fi
 
 echo ">>> [3/6] Detecting Environment for PyTorch Geometric..."
 # Automatically detect PyTorch and CUDA versions to build the correct wheel URL
