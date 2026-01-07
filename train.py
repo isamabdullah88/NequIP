@@ -138,7 +138,7 @@ def train(data_dir, finetune, batch_size, project, runname, mps=False, lr=1e-2, 
             wandb.save(checkpoint_path)
             wandb.save(latest_ckpath)
 
-            line = f"Epoch [{epoch+1}/{epochs}], Loss: {loss.item():.4f}, Time Taken: {(time.time()-stime): .01f}\n" 
+            line = f"Epoch [{epoch+1}/{epochs}], Loss: {loss.item():.4f}, Time Taken for single epoch: {(time.time()-stime): .01f}\n" 
             print(line)
             f.write(line)
             

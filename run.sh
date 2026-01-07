@@ -23,17 +23,16 @@ echo "    -> Using Wheel URL: $WHEEL_URL"
 echo ">>> [4/6] Installing Python Dependencies..."
 # Install the difficult GNN libraries using the correct wheel URL
 pip install torch-scatter torch-sparse torch-cluster torch-spline-conv -f $WHEEL_URL
-pip install torch_geometric e3nn wandb
+pip install torch_geometric e3nn wandb gdown
 
 echo ">>> [5/6] Setting up Data..."
-cd NequIP
 mkdir -p data results
 
 # OPTION A: Download Data (If you have a link)
 if [ ! -z "$DATA_DOWNLOAD_ID" ]; then
     echo "Downloading data from URL..."
     cd data
-    gdown https://drive.google.com/uc?id=Y"$DATA_DOWNLOAD_ID" -O md17_aspirin.npz
+    gdown https://drive.google.com/uc?id="$DATA_DOWNLOAD_ID" -O md17_aspirin.npz
     cd ..
     DATA_PATH="data/md17_aspirin.npz"
 
@@ -43,12 +42,12 @@ export WANDB_API_KEY=$WANDB_API_KEY
 
 # Run the training
 # Note: Removed --kaggle True, assuming you adjust defaults for Linux paths
-python train.py \
-    --data_dir "$DATA_PATH" \
-    --batch_size 32 \
-    --epochs 5000 \
-    --WANDB_KEY "$WANDB_API_KEY" \
-    --project "NequIP_Aspirin" \
-    --runname "Aspirin_Test_Run"
+# python train.py \
+#     --data_dir "$DATA_PATH" \
+#     --batch_size 32 \
+#     --epochs 5000 \
+#     --WANDB_KEY "$WANDB_API_KEY" \
+#     --project "NequIP_Aspirin" \
+#     --runname "Aspirin_Test_Run"
 
-echo ">>> Done! Training Complete."
+# echo ">>> Done! Training Complete."
