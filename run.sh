@@ -1,22 +1,13 @@
 #!/bin/bash
 set -e  # Stop script immediately if any command fails
 
-# --- CONFIGURATION (EDIT THESE) ---
-REPO_URL="https://github.com/isamabdullah88/NequIP.git"
-WANDB_API_KEY="PASTE_YOUR_WANDB_KEY_HERE"  # Or pass it as env var
-DATA_DOWNLOAD_URL="https://drive.google.com/uc?export=download&id=1LyzVyRgdE0H2EFlU6xpOpPscO4GSBLWf"  # Optional: Direct link to your .npz data (Dropbox/Drive)
+# ----------------------------------
+WANDB_API_KEY=""  # Or pass it as env var
+DATA_DOWNLOAD_ID="1LyzVyRgdE0H2EFlU6xpOpPscO4GSBLWf"  # Drive file ID
 # ----------------------------------
 
 echo ">>> [1/6] System Update & Essentials..."
-apt-get update && apt-get install -y git wget unzip
-
-# echo ">>> [2/6] Cloning Repository..."
-# if [ -d "NequIP" ]; then
-#     echo "Repo already exists, pulling latest changes..."
-#     cd NequIP && git pull && cd ..
-# else
-#     git clone $REPO_URL
-# fi
+apt-get update && apt-get install -y git wget nano
 
 echo ">>> [3/6] Detecting Environment for PyTorch Geometric..."
 # Automatically detect PyTorch and CUDA versions to build the correct wheel URL
@@ -39,22 +30,12 @@ cd NequIP
 mkdir -p data results
 
 # OPTION A: Download Data (If you have a link)
-if [ ! -z "$DATA_DOWNLOAD_URL" ]; then
+if [ ! -z "$DATA_DOWNLOAD_ID" ]; then
     echo "Downloading data from URL..."
-    wget -O data/dataset.npz "$DATA_DOWNLOAD_URL"
-    DATA_PATH="data/dataset.npz"
-
-# OPTION B: Check if you uploaded it manually via SCP
-elif [ -f "../dataset.npz" ]; then
-    echo "Found uploaded data, moving it..."
-    mv "../dataset.npz" data/
-    DATA_PATH="data/dataset.npz"
-
-else
-    echo "⚠️ WARNING: No data found! Attempting to run with 'md17' placeholder..."
-    echo "Please upload your .npz file to the server if needed."
-    DATA_PATH="data" # Adjust if your code expects a folder
-fi
+    cd data
+    gdown https://drive.google.com/uc?id=Y"$DATA_DOWNLOAD_ID" -O md17_aspirin.npz
+    cd ..
+    DATA_PATH="data/md17_aspirin.npz"
 
 echo ">>> [6/6] Starting Training..."
 # Log in to WandB non-interactively
@@ -64,8 +45,10 @@ export WANDB_API_KEY=$WANDB_API_KEY
 # Note: Removed --kaggle True, assuming you adjust defaults for Linux paths
 python train.py \
     --data_dir "$DATA_PATH" \
-    --results_dir "results" \
     --batch_size 32 \
-    --epochs 100
+    --epochs 5000 \
+    --WANDB_KEY "$WANDB_API_KEY" \
+    --project "NequIP_Aspirin" \
+    --runname "Aspirin_Test_Run"
 
 echo ">>> Done! Training Complete."
