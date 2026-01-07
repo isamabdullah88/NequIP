@@ -43,7 +43,7 @@ def criterion(energy, forces, data):
 
     return losstot
 
-def train(data_dir, finetune, batch_size, project, runname, mps=False, lr=1e-2, epochs=5000, ft_runname="", WANDB_KEY=""):
+def train(data_dir, finetune, batch_size, project, runname, device="mps", lr=1e-2, epochs=5000, ft_runname="", WANDB_KEY=""):
 
     trainloader, valloader, _ = getdata(data_dir, mini=False, batch_size=batch_size)
     trainsize = int(len(trainloader.dataset) / batch_size)
@@ -63,10 +63,10 @@ def train(data_dir, finetune, batch_size, project, runname, mps=False, lr=1e-2, 
         restored_ckpt = wandb.restore('results/checkpoints/latest-model.pt', run_path=runpath)
         checkpoint_path = restored_ckpt.name
         
-        model = loadmodel(checkpoint_path, mps=mps)
+        model = loadmodel(checkpoint_path, mps=device=="mps")
         print(f"Loaded model from {checkpoint_path} for finetuning.")
     else:
-        model = NequIP(mps=mps)
+        model = NequIP(mps=device=="mps")
         print("Initialized new model for training.")
         # --- PLACE THIS BEFORE YOUR TRAINING LOOP ---
         model = initialize_shift_scale(model, trainloader)
@@ -74,10 +74,16 @@ def train(data_dir, finetune, batch_size, project, runname, mps=False, lr=1e-2, 
     paramscount = count_parameters(model)
     print(f"Total Parameters:     {paramscount:,}")
 
-    if mps:
+    if device=="mps":
         device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu')
-    else:
+    elif device=="cuda":
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    elif device=="tpu":
+        import torch_xla
+        import torch_xla.core.xla_model as xm
+        # 3. Define the device
+        dev = xm.xla_device()
+        device = dev
     print(f"Using device: {device}")
     model = model.to(device)
 
@@ -154,7 +160,7 @@ if __name__ == "__main__":
                        type=str, help='Base directory for data.')
     parser.add_argument('--project', default="NequIP_Aspirin", type=str, help='WandB project name.')
     parser.add_argument('--runname', default="Run_01_1k_Samples", type=str, help='WandB run name.')
-    parser.add_argument('--mps', default=False, type=bool, help='Specify if the code is running on Mac/Cuda.')
+    parser.add_argument('--device', default="mps", type=str, help='Specify the device to use: "mps", "cuda", or "tpu".')
     parser.add_argument('--finetune', default=False, type=bool, help='Fine-tune from a ' \
     'pre-trained model.')
     parser.add_argument('--ft_runname', default="Run_00_FullData", type=str, help='WandB run name path of the model to fine-tune from.')
@@ -166,5 +172,5 @@ if __name__ == "__main__":
 
 
     train(args.data_dir, finetune=args.finetune, batch_size=args.batch_size, project=args.project,
-          runname=args.runname, ft_runname=args.ft_runname, mps=args.mps, epochs=args.epochs,
+          runname=args.runname, ft_runname=args.ft_runname, device=args.device, epochs=args.epochs,
           WANDB_KEY=args.WANDB_KEY, lr=args.lr)
