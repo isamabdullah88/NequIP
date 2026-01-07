@@ -114,7 +114,6 @@ class Convolution(nn.Module):
         posvec = pos[src] - pos[dst]
 
         dist = posvec.norm(dim=1, keepdim=False)
-        # print('dist: ', dist.shape)
 
         radial = self.radialMLP(dist)
 
