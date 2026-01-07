@@ -1,16 +1,34 @@
 
 import os
 import time
+import wandb
 
 import torch
 import torch.optim as optim
 import torch.nn.functional as F
-from torch.utils.tensorboard import SummaryWriter
 
 from data import getdata
 from model import NequIP, force
-from trainutils import loadmodel, initialize_shift_scale, savecheckpoint, count_parameters
+from trainutils import loadmodel, initialize_shift_scale, count_parameters, savecheckpoint
 from test import evaluate
+
+
+def initwandb(lr, batch_size, epochs, dataset_size, project, runname):
+    from wandbkey import WANDB_KEY
+    wandb.login(key=WANDB_KEY)
+
+    # --- 2. INITIALIZE RUN ---
+    run = wandb.init(
+        project=project,
+        name=runname, # Optional: Name this specific attempt
+        config={
+            "learning_rate": lr,
+            "batch_size": batch_size,
+            "max_epochs": epochs,
+            "architecture": "NequIP",
+            "dataset_size": dataset_size
+        }
+    )
 
 
 def criterion(energy, forces, data):
@@ -26,52 +44,27 @@ def criterion(energy, forces, data):
 
     return losstot
 
-def train(data_dir, results_dir, finetune, batch_size, checkpoint_ft, mps=False, kaggle=False,
-          lr=1e-2):
+def train(data_dir, finetune, batch_size, project, runname, mps=False, lr=1e-2, epochs=5000, ft_runname=""):
 
     trainloader, valloader, _ = getdata(data_dir, mini=False, batch_size=batch_size)
     trainsize = int(len(trainloader.dataset) / batch_size)
     print('Data loaded')
     
-    checkpoints_dir = os.path.join(results_dir, "checkpoints")
+    checkpoints_dir = "./checkpoints"
     if not os.path.exists(checkpoints_dir):
         os.makedirs(checkpoints_dir)
-
-    epochs = 5000
-
-    writer = SummaryWriter()
+    # Initialize wandb logging
+    initwandb(lr, batch_size, epochs, len(trainloader.dataset), project, runname)
     f = open('training-logs.txt', 'w')
 
-    if kaggle:
-        from kaggle_secrets import UserSecretsClient
-        import wandb
-        # --- 1. LOGIN SECURELY ---
-        user_secrets = UserSecretsClient()
-        secret_value = user_secrets.get_secret("wandb_key")
-        wandb.login(key=secret_value)
-
-        # --- 2. INITIALIZE RUN ---
-        # This creates a "project" on your dashboard
-        run = wandb.init(
-            project="Thesis_NequIP_Aspirin",
-            name="Run_01_1k_Samples", # Optional: Name this specific attempt
-            config={
-                "learning_rate": lr,
-                "batch_size": batch_size,
-                "max_epochs": epochs,
-                "architecture": "NequIP",
-                "dataset_size": len(trainloader.dataset)
-            }
-        )
 
     if finetune:
-        if kaggle:
-            restored_ckpt = wandb.restore('results/checkpoints/model_E990.pt', run_path="isamabdullah88-lahore-university-of-management-sciences/Thesis_NequIP_Aspirin/22bm6hom")
-            checkpoint_path = restored_ckpt.name
-        else:
-            checkpoint_path = os.path.join(checkpoints_dir, checkpoint_ft)
+        basepath = "isamabdullah88-lahore-university-of-management-sciences/Thesis_NequIP_Aspirin"
+        runpath = os.path.join(basepath, ft_runname)
+        restored_ckpt = wandb.restore('results/checkpoints/latest-model.pt', run_path=runpath)
+        checkpoint_path = restored_ckpt.name
         
-        model = loadmodel(checkpoint_path, args.mps)
+        model = loadmodel(checkpoint_path, mps=mps)
         print(f"Loaded model from {checkpoint_path} for finetuning.")
     else:
         model = NequIP(mps=mps)
@@ -114,41 +107,44 @@ def train(data_dir, results_dir, finetune, batch_size, checkpoint_ft, mps=False,
             loss.backward()
             optimizer.step()
 
-            writer.add_scalar('Batch-Loss/train', loss.item(), trainsize*epoch + k)
-            
+            # writer.add_scalar('Batch-Loss/train', loss.item(), trainsize*epoch + k)
+            wandb.log({
+                "train_loss": loss,
+                "iter": trainsize*epoch + k,
+                "learning_rate": optimizer.param_groups[0]['lr']
+            })
+        
             
         # --- save model every 10 epochs ---
-        if epoch % 10 == 0:
+        if (epoch + 1) % 10 == 0:
             
-            checkpoint_path = os.path.join(checkpoints_dir, f"model_E{epoch:04d}.pt")
-            savecheckpoint(checkpoint_path, epoch, model, optimizer, loss)
-
+            checkpoint_path = os.path.join(checkpoints_dir, f"Epoch-{epoch:04d}.pt")
             latest_ckpath = os.path.join(checkpoints_dir, "latest-model.pt")
+
+            savecheckpoint(checkpoint_path, epoch, model, optimizer, loss)
             savecheckpoint(latest_ckpath, epoch, model, optimizer, loss)
+
+
+
+            mae_energy, mae_force = evaluate(model, valloader, device=device)
+            # writer.add_scalar('MAE-Energy/val', mae_energy, epoch)
+            # writer.add_scalar('MAE-Force/val', mae_force, epoch)
+            wandb.log({
+                "MAE_Energy/val": mae_energy,
+                "MAE_Force/val": mae_force,
+                "epoch": epoch
+            })
+            
+            print("Saving model to wandb...")
+            wandb.save(checkpoint_path)
+            wandb.save(latest_ckpath)
 
             line = f"Epoch [{epoch+1}/{epochs}], Loss: {loss.item():.4f}, Time Taken: {(time.time()-stime): .01f}\n" 
             print(line)
             f.write(line)
-
-
-            mae_energy, mae_force = evaluate(model, valloader, device=device)
-            writer.add_scalar('MAE-Energy/val', mae_energy, epoch)
-            writer.add_scalar('MAE-Force/val', mae_force, epoch)
             
-            if kaggle:
-                wandb.log({
-                    "train_loss": loss,
-                    "MAE_Energy/val": mae_energy,
-                    "MAE_Force/val": mae_force,
-                    "epoch": epoch,
-                    "learning_rate": optimizer.param_groups[0]['lr']
-                })
-                wandb.save(checkpoint_path)
-                wandb.save(latest_ckpath)
-            
-            
-
-    writer.close()
+    wandb.finish()
+    f.close()
 
 
 if __name__ == "__main__":
@@ -157,18 +153,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train NequIP model.')
     parser.add_argument('--data_dir', default="/content/drive/My Drive/MS-Physics/ML-DFT/NequIP/Data",
                        type=str, help='Base directory for data.')
-    parser.add_argument('--results_dir', default="/content/drive/My Drive/MS-Physics/ML-DFT/NequIP/",
-                       type=str, help='Base directory for checkpoints.')
+    parser.add_argument('--project', default="NequIP_Aspirin", type=str, help='WandB project name.')
+    parser.add_argument('--runname', default="Run_01_1k_Samples", type=str, help='WandB run name.')
     parser.add_argument('--mps', default=False, type=bool, help='Specify if the code is running on Mac/Cuda.')
     parser.add_argument('--finetune', default=False, type=bool, help='Fine-tune from a ' \
     'pre-trained model.')
+    parser.add_argument('--ft_runname', default="Run_00_FullData", type=str, help='WandB run name path of the model to fine-tune from.')
     parser.add_argument('--batch_size', default=32, type=int, help='Batch size for training.')
-    parser.add_argument('--checkpoint_ft', default="model_E0.pt", type=str, help='Checkpoint to ' \
-    'load from when finetuning')
-    parser.add_argument('--kaggle', default=False, type=bool, help='Specify if training is ' \
-    'running on kaggle so as to save on wandb')
+    parser.add_argument('--epochs', default=5000, type=int, help='Number of training epochs.')
     args = parser.parse_args()
 
 
-    train(args.data_dir, args.results_dir, finetune=args.finetune, batch_size=args.batch_size,
-          checkpoint_ft=args.checkpoint_ft, mps=args.mps, kaggle=args.kaggle)
+    train(args.data_dir, finetune=args.finetune, batch_size=args.batch_size, project=args.project,
+          runname=args.runname, ft_runname=args.ft_runname, mps=args.mps, epochs=args.epochs)
