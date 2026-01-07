@@ -35,6 +35,7 @@ if [ ! -z "$DATA_DOWNLOAD_ID" ]; then
     gdown https://drive.google.com/uc?id="$DATA_DOWNLOAD_ID" -O md17_aspirin.npz
     cd ..
     DATA_PATH="data/md17_aspirin.npz"
+fi
 
 echo ">>> [6/6] Starting Training..."
 # Log in to WandB non-interactively
