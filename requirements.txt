@@ -5,3 +5,4 @@ torch
 torch-geometric
 torchsummary
 torchvision
+wandb

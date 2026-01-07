@@ -9,6 +9,8 @@ runs/
 Data/
 checkpoints*/
 Presentation/
+wandb/
+wandbkey.py
 
 # C extensions
 *.so
