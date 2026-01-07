@@ -63,9 +63,12 @@ def getdata(data_dir, mini=True, batch_size=32):
     print('train_list: ', len(train_list))
     print('val_list: ', len(val_list))
     print('test_list: ', len(test_list))
-    trainloader = DataLoader(train_list, batch_size=batch_size, shuffle=True)
-    valloader = DataLoader(val_list, batch_size=batch_size, shuffle=False)
-    testloader = DataLoader(test_list, batch_size=batch_size, shuffle=False)
+    trainloader = DataLoader(train_list, batch_size=batch_size, shuffle=True, num_workers=4,
+                            keep_workers_alive=True, pin_memory=True)
+    valloader = DataLoader(val_list, batch_size=batch_size, shuffle=False, num_workers=4,
+                           keep_workers_alive=True, pin_memory=True)
+    testloader = DataLoader(test_list, batch_size=batch_size, shuffle=False, num_workers=4,
+                            keep_workers_alive=True, pin_memory=True)
 
     return trainloader, valloader, testloader
 if __name__ == "__main__":
