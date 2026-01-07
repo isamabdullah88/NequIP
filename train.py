@@ -159,6 +159,7 @@ if __name__ == "__main__":
     'pre-trained model.')
     parser.add_argument('--ft_runname', default="Run_00_FullData", type=str, help='WandB run name path of the model to fine-tune from.')
     parser.add_argument('--batch_size', default=32, type=int, help='Batch size for training.')
+    parser.add_argument('--lr', default=1e-2, type=float, help='Learning rate for optimizer.')
     parser.add_argument('--epochs', default=5000, type=int, help='Number of training epochs.')
     parser.add_argument('--WANDB_KEY', default="", type=str, help='WandB API Key.')
     args = parser.parse_args()
@@ -166,4 +167,4 @@ if __name__ == "__main__":
 
     train(args.data_dir, finetune=args.finetune, batch_size=args.batch_size, project=args.project,
           runname=args.runname, ft_runname=args.ft_runname, mps=args.mps, epochs=args.epochs,
-          WANDB_KEY=args.WANDB_KEY)
+          WANDB_KEY=args.WANDB_KEY, lr=args.lr)
