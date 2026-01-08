@@ -43,9 +43,9 @@ class Radial(nn.Module):
         self.numbasis = indim
 
         self.model = nn.Sequential(
-            nn.Linear(indim, 64),
+            nn.Linear(indim, 32),
             nn.SiLU(),
-            nn.Linear(64, outdim)
+            nn.Linear(32, outdim)
         )
 
     def forward(self, dist):
@@ -73,15 +73,22 @@ class Convolution(nn.Module):
         irreps_in1 = o3.Irreps(f"{l0dim}x0e + {l1dim}x1o + {l2dim}x2e")
         irreps_in2 = o3.Irreps("1x0e + 1x1o + 1x2e")
         irreps_out = o3.Irreps(f"{l0dim}x0e + {l1dim}x1o + {l2dim}x2e")
-        instructions = gen_instructions(irreps_in1, irreps_in2, irreps_out)
+        # instructions = gen_instructions(irreps_in1, irreps_in2, irreps_out)
 
-        self.tp = o3.TensorProduct(
-            irreps_in1 = irreps_in1,  # input features
-            irreps_in2 = irreps_in2,   # spherical harmonics l=1
-            irreps_out = irreps_out,  # output features
-            instructions = instructions,
-            internal_weights = False,
-            shared_weights = False
+        # self.tp = o3.TensorProduct(
+        #     irreps_in1 = irreps_in1,  # input features
+        #     irreps_in2 = irreps_in2,   # spherical harmonics l=1
+        #     irreps_out = irreps_out,  # output features
+        #     instructions = instructions,
+        #     internal_weights = False,
+        #     shared_weights = False
+        # )
+        self.tp = o3.FullyConnectedTensorProduct(
+            irreps_in1=irreps_in1,
+            irreps_in2=irreps_in2,
+            irreps_out=irreps_out,
+            shared_weights=False,
+            internal_weights=False
         )
 
         numweights = self.tp.weight_numel
