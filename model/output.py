@@ -7,7 +7,7 @@ class OutputBlock(nn.Module):
         super(OutputBlock, self).__init__()
         
         input_irreps = o3.Irreps(f"{l0dim}x0e + {l1dim}x1o + {l2dim}x2e")
-        # output_irreps = o3.Irreps(f"{l0dim}x0e")
+        
         self.linear = o3.Linear(input_irreps, o3.Irreps("1x0e"))
 
         self.scale = nn.Parameter(torch.tensor(1.0))

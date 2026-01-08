@@ -14,11 +14,8 @@ class InteractionBlock(nn.Module):
 
         self.owninteraction2 = o3.Linear(in_irreps, in_irreps)
 
-        # print('self-interaction: ', self.owninteraction1.weight.shape)
-        # convolution
         self.convolution = Convolution(l0dim, l1dim, l2dim, mps=mps)
 
-        # gate
         self.gate = NonLinearGate(l0dim, l1dim, l2dim)
 
     def forward(self, nodes: torch.Tensor, pos: torch.Tensor, batch: torch.Tensor) -> torch.Tensor:

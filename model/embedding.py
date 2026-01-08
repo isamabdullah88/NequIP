@@ -18,5 +18,5 @@ class AtomEmbedding(nn.Module):
         embeds = self.embedding(z)
 
         linear = self.linear(embeds)
-        # print("Atom embeddings shape:", linear.shape)
+        
         return linear
