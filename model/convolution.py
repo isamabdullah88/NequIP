@@ -73,23 +73,21 @@ class Convolution(nn.Module):
         irreps_in1 = o3.Irreps(f"{l0dim}x0e + {l1dim}x1o + {l2dim}x2e")
         irreps_in2 = o3.Irreps("1x0e + 1x1o + 1x2e")
         irreps_out = o3.Irreps(f"{l0dim}x0e + {l1dim}x1o + {l2dim}x2e")
-        # instructions = gen_instructions(irreps_in1, irreps_in2, irreps_out)
 
-        # self.tp = o3.TensorProduct(
-        #     irreps_in1 = irreps_in1,  # input features
-        #     irreps_in2 = irreps_in2,   # spherical harmonics l=1
-        #     irreps_out = irreps_out,  # output features
-        #     instructions = instructions,
-        #     internal_weights = False,
-        #     shared_weights = False
-        # )
-        self.tp = o3.FullyConnectedTensorProduct(
-            irreps_in1=irreps_in1,
-            irreps_in2=irreps_in2,
-            irreps_out=irreps_out,
-            shared_weights=False,
-            internal_weights=False
+        self.linear1 = o3.Linear(irreps_in1, irreps_in1)
+
+        instructions = gen_instructions(irreps_in1, irreps_in2, irreps_out)
+
+        self.tp = o3.TensorProduct(
+            irreps_in1 = irreps_in1,  # input features
+            irreps_in2 = irreps_in2,   # spherical harmonics l=1
+            irreps_out = irreps_out,  # output features
+            instructions = instructions,
+            internal_weights = False,
+            shared_weights = False
         )
+
+        self.linear2 = o3.Linear(irreps_out, irreps_out)
 
         numweights = self.tp.weight_numel
         self.radialMLP = Radial(self.numbasis, numweights, self.rcut)
@@ -114,9 +112,13 @@ class Convolution(nn.Module):
 
         ylm = o3.spherical_harmonics(l=[0, 1, 2], x=posvec, normalize=True, normalization='component')
 
-        messages = self.tp(neighbors, ylm, weight=radial)
+        mxdneighbors = self.linear1(neighbors)
 
-        aggregated = scatter(messages, dst, dim=0, reduce='add')
+        messages = self.tp(mxdneighbors, ylm, weight=radial)
+
+        mxdmessages = self.linear2(messages)
+
+        aggregated = scatter(mxdmessages, dst, dim=0, reduce='add')
 
         aggregated = aggregated / (self.avg_neighbors**0.5)
 
