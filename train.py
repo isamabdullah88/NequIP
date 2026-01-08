@@ -72,6 +72,9 @@ def train(data_dir, finetune, batch_size, project, runname, mps=False, lr=1e-2, 
         # --- PLACE THIS BEFORE YOUR TRAINING LOOP ---
         model = initialize_shift_scale(model, trainloader)
 
+    print("###################################")
+    print('Model Architecture: \n', model)
+    print("###################################")
     paramscount = count_parameters(model)
     print(f"Total Parameters:     {paramscount:,}")
 
