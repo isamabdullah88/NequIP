@@ -1,0 +1,1932 @@
+/NequIP/model/output.py:14: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  self.shift = nn.Parameter(torch.tensor(torch.zeros(num_species)))
+Initialized new model for training.
+--> Auto-initializing shift/scale (NumPy Mode)...
+--> Solving for 1000 structures using NumPy...
+--> Success! Shifts: [-1.12484796e-13 -2.02105391e+04  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00 -2.27368574e+04  0.00000000e+00
+ -1.01052695e+04  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00
+  0.00000000e+00  0.00000000e+00  0.00000000e+00  0.00000000e+00]
+###################################
+Model Architecture:
+ NequIP(
+  (atomembeds): AtomEmbedding(
+    (embedding): Embedding(100, 32)
+    (linear): Linear(32x0e -> 32x0e+32x1o+32x2o | 1024 weights)
+  )
+  (interaction_block1): InteractionBlock(
+    (owninteraction1): Linear(32x0e+32x1o+32x2o -> 32x0e+32x1o+32x2o | 3072 weights)
+    (owninteraction2): Linear(32x0e+32x1o+32x2o -> 32x0e+32x1o+32x2o | 3072 weights)
+    (convolution): Convolution(
+      (tp): FullyConnectedTensorProduct(32x0e+32x1o+32x2e x 1x0e+1x1o+1x2e -> 32x0e+32x1o+32x2e | 11264 paths | 11264 weights)
+      (radialMLP): Radial(
+        (model): Sequential(
+          (0): Linear(in_features=8, out_features=32, bias=True)
+          (1): SiLU()
+          (2): Linear(in_features=32, out_features=11264, bias=True)
+        )
+      )
+    )
+    (gate): NonLinearGate(
+      (linear): Linear(32x0e+32x1o+32x2o -> 96x0e+32x1o+32x2o | 5120 weights)
+      (gate): Gate (96x0e+32x1o+32x2e -> 32x0e+32x1o+32x2e)
+    )
+  )
+  (interaction_block2): InteractionBlock(
+    (owninteraction1): Linear(32x0e+32x1o+32x2o -> 32x0e+32x1o+32x2o | 3072 weights)
+    (owninteraction2): Linear(32x0e+32x1o+32x2o -> 32x0e+32x1o+32x2o | 3072 weights)
+    (convolution): Convolution(
+      (tp): FullyConnectedTensorProduct(32x0e+32x1o+32x2e x 1x0e+1x1o+1x2e -> 32x0e+32x1o+32x2e | 11264 paths | 11264 weights)
+      (radialMLP): Radial(
+        (model): Sequential(
+          (0): Linear(in_features=8, out_features=32, bias=True)
+          (1): SiLU()
+          (2): Linear(in_features=32, out_features=11264, bias=True)
+        )
+      )
+    )
+    (gate): NonLinearGate(
+      (linear): Linear(32x0e+32x1o+32x2o -> 96x0e+32x1o+32x2o | 5120 weights)
+      (gate): Gate (96x0e+32x1o+32x2e -> 32x0e+32x1o+32x2e)
+    )
+  )
+  (interaction_block3): InteractionBlock(
+    (owninteraction1): Linear(32x0e+32x1o+32x2o -> 32x0e+32x1o+32x2o | 3072 weights)
+    (owninteraction2): Linear(32x0e+32x1o+32x2o -> 32x0e+32x1o+32x2o | 3072 weights)
+    (convolution): Convolution(
+      (tp): FullyConnectedTensorProduct(32x0e+32x1o+32x2e x 1x0e+1x1o+1x2e -> 32x0e+32x1o+32x2e | 11264 paths | 11264 weights)
+      (radialMLP): Radial(
+        (model): Sequential(
+          (0): Linear(in_features=8, out_features=32, bias=True)
+          (1): SiLU()
+          (2): Linear(in_features=32, out_features=11264, bias=True)
+        )
+      )
+    )
+    (gate): NonLinearGate(
+      (linear): Linear(32x0e+32x1o+32x2o -> 96x0e+32x1o+32x2o | 5120 weights)
+      (gate): Gate (96x0e+32x1o+32x2e -> 32x0e+32x1o+32x2e)
+    )
+  )
+  (interaction_block4): InteractionBlock(
+    (owninteraction1): Linear(32x0e+32x1o+32x2o -> 32x0e+32x1o+32x2o | 3072 weights)
+    (owninteraction2): Linear(32x0e+32x1o+32x2o -> 32x0e+32x1o+32x2o | 3072 weights)
+    (convolution): Convolution(
+      (tp): FullyConnectedTensorProduct(32x0e+32x1o+32x2e x 1x0e+1x1o+1x2e -> 32x0e+32x1o+32x2e | 11264 paths | 11264 weights)
+      (radialMLP): Radial(
+        (model): Sequential(
+          (0): Linear(in_features=8, out_features=32, bias=True)
+          (1): SiLU()
+          (2): Linear(in_features=32, out_features=11264, bias=True)
+        )
+      )
+    )
+    (gate): NonLinearGate(
+      (linear): Linear(32x0e+32x1o+32x2o -> 96x0e+32x1o+32x2o | 5120 weights)
+      (gate): Gate (96x0e+32x1o+32x2e -> 32x0e+32x1o+32x2e)
+    )
+  )
+  (interaction_block5): InteractionBlock(
+    (owninteraction1): Linear(32x0e+32x1o+32x2o -> 32x0e+32x1o+32x2o | 3072 weights)
+    (owninteraction2): Linear(32x0e+32x1o+32x2o -> 32x0e+32x1o+32x2o | 3072 weights)
+    (convolution): Convolution(
+      (tp): FullyConnectedTensorProduct(32x0e+32x1o+32x2e x 1x0e+1x1o+1x2e -> 32x0e+32x1o+32x2e | 11264 paths | 11264 weights)
+      (radialMLP): Radial(
+        (model): Sequential(
+          (0): Linear(in_features=8, out_features=32, bias=True)
+          (1): SiLU()
+          (2): Linear(in_features=32, out_features=11264, bias=True)
+        )
+      )
+    )
+    (gate): NonLinearGate(
+      (linear): Linear(32x0e+32x1o+32x2o -> 96x0e+32x1o+32x2o | 5120 weights)
+      (gate): Gate (96x0e+32x1o+32x2e -> 32x0e+32x1o+32x2e)
+    )
+  )
+  (output_block): OutputBlock(
+    (linear): Linear(32x0e+32x1o+32x2e -> 1x0e | 32 weights)
+  )
+)
+###################################
+Total Parameters:     1,920,677
+Using device: cuda
+Starting training...
+✅ Saved checkpoint: ./checkpoints/Epoch-0009.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.13003 eV
+Force  MAE: 3.17580 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [10/5000], Loss: 2014.7889, Time Taken for single epoch:  18.8
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0019.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.00003 eV
+Force  MAE: 1.90416 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [20/5000], Loss: 658.8540, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0029.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 4.95147 eV
+Force  MAE: 1.70212 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [30/5000], Loss: 511.8432, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0039.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.87475 eV
+Force  MAE: 1.41029 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [40/5000], Loss: 440.9592, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0049.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 4.30713 eV
+Force  MAE: 1.55418 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [50/5000], Loss: 478.2329, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0059.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 4.53050 eV
+Force  MAE: 1.43748 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [60/5000], Loss: 290.8001, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0069.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.52488 eV
+Force  MAE: 1.33053 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [70/5000], Loss: 258.5920, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0079.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.23275 eV
+Force  MAE: 1.25292 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [80/5000], Loss: 241.8981, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0089.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 11.65378 eV
+Force  MAE: 1.19931 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [90/5000], Loss: 538.8384, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0099.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.74341 eV
+Force  MAE: 0.96317 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [100/5000], Loss: 160.4729, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0109.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 3.65531 eV
+Force  MAE: 0.90240 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [110/5000], Loss: 138.6084, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0119.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.67725 eV
+Force  MAE: 1.02251 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [120/5000], Loss: 139.0684, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0129.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 4.78784 eV
+Force  MAE: 0.84310 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [130/5000], Loss: 132.1464, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0139.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.39409 eV
+Force  MAE: 0.86786 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [140/5000], Loss: 135.7288, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0149.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.01756 eV
+Force  MAE: 0.80660 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [150/5000], Loss: 112.5168, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0159.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.70691 eV
+Force  MAE: 0.80078 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [160/5000], Loss: 125.8896, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0169.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 4.76487 eV
+Force  MAE: 0.77737 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [170/5000], Loss: 126.3624, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0179.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 4.29612 eV
+Force  MAE: 1.25882 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [180/5000], Loss: 181.0488, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0189.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.12013 eV
+Force  MAE: 0.68386 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [190/5000], Loss: 83.5568, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0199.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.47766 eV
+Force  MAE: 0.90621 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [200/5000], Loss: 119.7138, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0209.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 3.39347 eV
+Force  MAE: 1.06167 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [210/5000], Loss: 260.9925, Time Taken for single epoch:  18.7
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0219.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.46813 eV
+Force  MAE: 0.66632 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [220/5000], Loss: 87.1892, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0229.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 5.01394 eV
+Force  MAE: 0.71322 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [230/5000], Loss: 92.9694, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0239.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.93666 eV
+Force  MAE: 0.70845 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [240/5000], Loss: 74.5903, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0249.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.73694 eV
+Force  MAE: 0.63177 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [250/5000], Loss: 64.9665, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0259.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.86094 eV
+Force  MAE: 0.66858 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [260/5000], Loss: 73.3570, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0269.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.31088 eV
+Force  MAE: 0.69720 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [270/5000], Loss: 62.6886, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0279.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.12797 eV
+Force  MAE: 0.63027 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [280/5000], Loss: 68.3969, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0289.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.67803 eV
+Force  MAE: 0.61668 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [290/5000], Loss: 55.6312, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0299.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.53000 eV
+Force  MAE: 0.60383 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [300/5000], Loss: 52.4304, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0309.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.83428 eV
+Force  MAE: 0.77539 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [310/5000], Loss: 102.8728, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0319.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.45422 eV
+Force  MAE: 0.57720 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [320/5000], Loss: 58.7433, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0329.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 3.41975 eV
+Force  MAE: 0.72610 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [330/5000], Loss: 93.5363, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0339.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.39763 eV
+Force  MAE: 0.62825 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [340/5000], Loss: 67.3541, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0349.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.59259 eV
+Force  MAE: 0.72977 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [350/5000], Loss: 62.8595, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0359.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.00416 eV
+Force  MAE: 0.55393 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [360/5000], Loss: 57.6358, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0369.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.64506 eV
+Force  MAE: 0.58206 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [370/5000], Loss: 56.9809, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0379.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.78244 eV
+Force  MAE: 0.58998 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [380/5000], Loss: 59.9013, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0389.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.53738 eV
+Force  MAE: 0.54204 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [390/5000], Loss: 52.8961, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0399.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 3.03219 eV
+Force  MAE: 0.76924 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [400/5000], Loss: 116.6594, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0409.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 4.31122 eV
+Force  MAE: 0.74405 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [410/5000], Loss: 85.8188, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0419.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.37925 eV
+Force  MAE: 0.71849 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [420/5000], Loss: 84.0811, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0429.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.96069 eV
+Force  MAE: 0.70645 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [430/5000], Loss: 69.6031, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0439.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 4.50206 eV
+Force  MAE: 1.19276 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [440/5000], Loss: 228.3969, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0449.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.35947 eV
+Force  MAE: 0.54063 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [450/5000], Loss: 39.4598, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0459.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.68706 eV
+Force  MAE: 0.90795 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [460/5000], Loss: 207.8447, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0469.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.51369 eV
+Force  MAE: 0.51990 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [470/5000], Loss: 40.6062, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0479.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.92934 eV
+Force  MAE: 1.53217 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [480/5000], Loss: 448.4983, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0489.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.25019 eV
+Force  MAE: 0.51301 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [490/5000], Loss: 36.2382, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0499.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.31097 eV
+Force  MAE: 0.55904 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [500/5000], Loss: 37.9010, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0509.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 3.79881 eV
+Force  MAE: 0.59184 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [510/5000], Loss: 65.5471, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0519.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.51403 eV
+Force  MAE: 0.56584 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [520/5000], Loss: 45.6930, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0529.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.94653 eV
+Force  MAE: 0.54776 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [530/5000], Loss: 38.7196, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0539.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.30719 eV
+Force  MAE: 0.71035 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [540/5000], Loss: 112.9677, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0549.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.39953 eV
+Force  MAE: 0.50134 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [550/5000], Loss: 41.4621, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0559.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.51063 eV
+Force  MAE: 0.64599 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [560/5000], Loss: 105.2516, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0569.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.96212 eV
+Force  MAE: 0.60499 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [570/5000], Loss: 58.1141, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0579.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.56350 eV
+Force  MAE: 1.14605 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [580/5000], Loss: 138.7535, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0589.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.41700 eV
+Force  MAE: 0.47002 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [590/5000], Loss: 28.1450, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0599.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.28209 eV
+Force  MAE: 0.47546 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [600/5000], Loss: 32.5303, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0609.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.69778 eV
+Force  MAE: 0.64858 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [610/5000], Loss: 92.4739, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0619.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.80412 eV
+Force  MAE: 0.75467 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [620/5000], Loss: 90.1123, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0629.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.79019 eV
+Force  MAE: 0.65465 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [630/5000], Loss: 58.5984, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0639.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.12278 eV
+Force  MAE: 0.58916 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [640/5000], Loss: 48.2100, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0649.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 3.06078 eV
+Force  MAE: 0.54977 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [650/5000], Loss: 50.7409, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0659.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 4.24034 eV
+Force  MAE: 0.46916 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [660/5000], Loss: 47.3569, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0669.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 3.66538 eV
+Force  MAE: 0.56029 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [670/5000], Loss: 51.0968, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0679.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.85894 eV
+Force  MAE: 0.47524 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [680/5000], Loss: 42.1042, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0689.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 3.28881 eV
+Force  MAE: 0.68221 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [690/5000], Loss: 88.8195, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0699.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.69312 eV
+Force  MAE: 0.53204 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [700/5000], Loss: 45.6963, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0709.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.94247 eV
+Force  MAE: 0.90521 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [710/5000], Loss: 129.5394, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0719.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.67378 eV
+Force  MAE: 0.50019 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [720/5000], Loss: 28.4643, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0729.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.20269 eV
+Force  MAE: 0.56363 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [730/5000], Loss: 50.2786, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0739.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.34759 eV
+Force  MAE: 0.97431 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [740/5000], Loss: 255.4597, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0749.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.31238 eV
+Force  MAE: 0.43019 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [750/5000], Loss: 21.3525, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0759.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.86972 eV
+Force  MAE: 0.44269 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [760/5000], Loss: 29.9017, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0769.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.56269 eV
+Force  MAE: 0.50164 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [770/5000], Loss: 32.6886, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0779.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.92788 eV
+Force  MAE: 0.51737 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [780/5000], Loss: 49.9090, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0789.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.12378 eV
+Force  MAE: 0.56952 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [790/5000], Loss: 61.3337, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0799.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.79569 eV
+Force  MAE: 0.67250 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [800/5000], Loss: 59.2389, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0809.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 4.87828 eV
+Force  MAE: 0.72460 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [810/5000], Loss: 126.8790, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0819.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.28325 eV
+Force  MAE: 0.42832 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [820/5000], Loss: 26.3550, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0829.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.20872 eV
+Force  MAE: 0.61739 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [830/5000], Loss: 55.1248, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0839.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.73287 eV
+Force  MAE: 0.53187 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [840/5000], Loss: 41.7693, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0849.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.46409 eV
+Force  MAE: 0.52209 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [850/5000], Loss: 35.9779, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0859.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.23309 eV
+Force  MAE: 0.76146 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [860/5000], Loss: 105.2890, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0869.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.41419 eV
+Force  MAE: 0.55086 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [870/5000], Loss: 49.7703, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0879.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.27263 eV
+Force  MAE: 0.48508 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [880/5000], Loss: 31.0701, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0889.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.79597 eV
+Force  MAE: 0.61871 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [890/5000], Loss: 61.6227, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0899.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.18428 eV
+Force  MAE: 0.50668 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [900/5000], Loss: 25.1540, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0909.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.98903 eV
+Force  MAE: 0.58933 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [910/5000], Loss: 45.8453, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0919.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.22303 eV
+Force  MAE: 0.51357 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [920/5000], Loss: 31.5519, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0929.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.49069 eV
+Force  MAE: 0.54325 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [930/5000], Loss: 43.3242, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0939.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.24403 eV
+Force  MAE: 0.70073 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [940/5000], Loss: 70.5170, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0949.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 3.52056 eV
+Force  MAE: 0.67642 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [950/5000], Loss: 84.0944, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0959.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.22091 eV
+Force  MAE: 0.44148 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [960/5000], Loss: 21.3006, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0969.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 6.06544 eV
+Force  MAE: 0.79198 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [970/5000], Loss: 110.2603, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0979.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.51447 eV
+Force  MAE: 0.54301 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [980/5000], Loss: 32.3870, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0989.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.64397 eV
+Force  MAE: 0.41136 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [990/5000], Loss: 18.7456, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-0999.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.15747 eV
+Force  MAE: 0.49773 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1000/5000], Loss: 50.4000, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1009.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.57809 eV
+Force  MAE: 0.54651 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1010/5000], Loss: 40.2020, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1019.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.99631 eV
+Force  MAE: 0.60820 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1020/5000], Loss: 54.7747, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1029.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.79916 eV
+Force  MAE: 0.48539 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1030/5000], Loss: 25.4928, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1039.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.30706 eV
+Force  MAE: 0.40650 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1040/5000], Loss: 18.8902, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1049.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.35191 eV
+Force  MAE: 0.41518 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1050/5000], Loss: 25.9959, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1059.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.20669 eV
+Force  MAE: 0.46115 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1060/5000], Loss: 22.2433, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1069.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.29431 eV
+Force  MAE: 0.38116 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1070/5000], Loss: 16.4918, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1079.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.26731 eV
+Force  MAE: 0.42577 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1080/5000], Loss: 16.7939, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1089.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 3.67303 eV
+Force  MAE: 1.06230 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1090/5000], Loss: 109.5559, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1099.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 6.68438 eV
+Force  MAE: 22.43397 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1100/5000], Loss: 451261.0312, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1109.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 4.47769 eV
+Force  MAE: 9.50477 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1110/5000], Loss: 18679.1367, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1119.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 17.11569 eV
+Force  MAE: 5.08185 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1120/5000], Loss: 5692.8462, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1129.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.79144 eV
+Force  MAE: 3.70164 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1130/5000], Loss: 2783.0891, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1139.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.04197 eV
+Force  MAE: 3.22769 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1140/5000], Loss: 2024.0270, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1149.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.75416 eV
+Force  MAE: 2.95674 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1150/5000], Loss: 1689.5475, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1159.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.55781 eV
+Force  MAE: 2.71731 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1160/5000], Loss: 1577.7565, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1169.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.69144 eV
+Force  MAE: 2.55472 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1170/5000], Loss: 1223.8594, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1179.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.54806 eV
+Force  MAE: 2.42277 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1180/5000], Loss: 986.9562, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1189.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 5.07441 eV
+Force  MAE: 2.32698 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1190/5000], Loss: 987.1132, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1199.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.86897 eV
+Force  MAE: 2.20871 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1200/5000], Loss: 874.1930, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1209.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 4.94144 eV
+Force  MAE: 2.14367 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1210/5000], Loss: 806.4835, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1219.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 5.46103 eV
+Force  MAE: 2.05363 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1220/5000], Loss: 879.0125, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1229.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 3.43203 eV
+Force  MAE: 1.99146 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1230/5000], Loss: 721.2954, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1239.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 3.62306 eV
+Force  MAE: 1.97998 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1240/5000], Loss: 631.1503, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1249.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 1.35947 eV
+Force  MAE: 1.84044 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1250/5000], Loss: 657.7537, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1259.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 3.42350 eV
+Force  MAE: 1.87049 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1260/5000], Loss: 584.2317, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1269.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.85272 eV
+Force  MAE: 1.76270 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1270/5000], Loss: 570.4373, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1279.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 9.27769 eV
+Force  MAE: 1.85434 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1280/5000], Loss: 756.5392, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1289.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 6.11566 eV
+Force  MAE: 1.72494 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1290/5000], Loss: 493.8858, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1299.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 2.63050 eV
+Force  MAE: 1.70880 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1300/5000], Loss: 588.8289, Time Taken for single epoch:  18.5
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1309.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 3.10956 eV
+Force  MAE: 1.56782 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1310/5000], Loss: 454.8465, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1319.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 0.87159 eV
+Force  MAE: 1.78779 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1320/5000], Loss: 415.2199, Time Taken for single epoch:  18.6
+
+✅ Saved checkpoint: ./checkpoints/Epoch-1329.pt
+✅ Saved checkpoint: ./checkpoints/latest-model.pt
+Starting evaluation...
+==============================
+RESULTS (Validation Set)
+==============================
+Energy MAE: 8.56381 eV
+Force  MAE: 1.59860 eV/A
+==============================
+Saving model to wandb...
+[34m[1mwandb[0m: [33mWARNING[0m Symlinked 1 file into the W&B run directory; call wandb.save again to sync new files.
+Epoch [1330/5000], Loss: 426.9189, Time Taken for single epoch:  18.5
+Traceback (most recent call last):
+  File "/NequIP/train.py", line 172, in <module>
+    train(args.data_dir, finetune=args.finetune, batch_size=args.batch_size, project=args.project,
+  File "/NequIP/train.py", line 114, in train
+    wandb.log({
+  File "/usr/local/lib/python3.10/dist-packages/wandb/sdk/wandb_run.py", line 400, in wrapper
+    return func(self, *args, **kwargs)
+  File "/usr/local/lib/python3.10/dist-packages/wandb/sdk/wandb_run.py", line 458, in wrapper_fn
+    return func(self, *args, **kwargs)
+  File "/usr/local/lib/python3.10/dist-packages/wandb/sdk/wandb_run.py", line 445, in wrapper
+    return func(self, *args, **kwargs)
+  File "/usr/local/lib/python3.10/dist-packages/wandb/sdk/wandb_run.py", line 2034, in log
+    self._log(data=data, step=step, commit=commit)
+  File "/usr/local/lib/python3.10/dist-packages/wandb/sdk/wandb_run.py", line 1745, in _log
+    self._partial_history_callback(data, step, commit)
+  File "/usr/local/lib/python3.10/dist-packages/wandb/sdk/wandb_run.py", line 400, in wrapper
+    return func(self, *args, **kwargs)
+  File "/usr/local/lib/python3.10/dist-packages/wandb/sdk/wandb_run.py", line 1573, in _partial_history_callback
+    self._backend.interface.publish_partial_history(
+  File "/usr/local/lib/python3.10/dist-packages/wandb/sdk/interface/interface.py", line 701, in publish_partial_history
+    item.value_json = json_dumps_safer_history(v)
+  File "/usr/local/lib/python3.10/dist-packages/wandb/util.py", line 862, in json_dumps_safer_history
+    return dumps(obj, cls=WandBHistoryJSONEncoder, **kwargs)
+  File "/usr/lib/python3.10/json/__init__.py", line 238, in dumps
+    **kw).encode(obj)
+  File "/usr/lib/python3.10/json/encoder.py", line 199, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/usr/lib/python3.10/json/encoder.py", line 257, in iterencode
+    return _iterencode(o, 0)
+  File "/usr/local/lib/python3.10/dist-packages/wandb/util.py", line 821, in default
+    obj, converted = json_friendly(obj)
+  File "/usr/local/lib/python3.10/dist-packages/wandb/util.py", line 633, in json_friendly
+    return obj.item(), True
+KeyboardInterrupt
+Traceback (most recent call last):
+  File "/NequIP/train.py", line 172, in <module>
+    train(args.data_dir, finetune=args.finetune, batch_size=args.batch_size, project=args.project,
+  File "/NequIP/train.py", line 114, in train
+    wandb.log({
+  File "/usr/local/lib/python3.10/dist-packages/wandb/sdk/wandb_run.py", line 400, in wrapper
+    return func(self, *args, **kwargs)
+  File "/usr/local/lib/python3.10/dist-packages/wandb/sdk/wandb_run.py", line 458, in wrapper_fn
+    return func(self, *args, **kwargs)
+  File "/usr/local/lib/python3.10/dist-packages/wandb/sdk/wandb_run.py", line 445, in wrapper
+    return func(self, *args, **kwargs)
+  File "/usr/local/lib/python3.10/dist-packages/wandb/sdk/wandb_run.py", line 2034, in log
+    self._log(data=data, step=step, commit=commit)
+  File "/usr/local/lib/python3.10/dist-packages/wandb/sdk/wandb_run.py", line 1745, in _log
+    self._partial_history_callback(data, step, commit)
+  File "/usr/local/lib/python3.10/dist-packages/wandb/sdk/wandb_run.py", line 400, in wrapper
+    return func(self, *args, **kwargs)
+  File "/usr/local/lib/python3.10/dist-packages/wandb/sdk/wandb_run.py", line 1573, in _partial_history_callback
+    self._backend.interface.publish_partial_history(
+  File "/usr/local/lib/python3.10/dist-packages/wandb/sdk/interface/interface.py", line 701, in publish_partial_history
+    item.value_json = json_dumps_safer_history(v)
+  File "/usr/local/lib/python3.10/dist-packages/wandb/util.py", line 862, in json_dumps_safer_history
+    return dumps(obj, cls=WandBHistoryJSONEncoder, **kwargs)
+  File "/usr/lib/python3.10/json/__init__.py", line 238, in dumps
+    **kw).encode(obj)
+  File "/usr/lib/python3.10/json/encoder.py", line 199, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+  File "/usr/lib/python3.10/json/encoder.py", line 257, in iterencode
+    return _iterencode(o, 0)
+  File "/usr/local/lib/python3.10/dist-packages/wandb/util.py", line 821, in default
+    obj, converted = json_friendly(obj)
+  File "/usr/local/lib/python3.10/dist-packages/wandb/util.py", line 633, in json_friendly
+    return obj.item(), True
+KeyboardInterrupt
