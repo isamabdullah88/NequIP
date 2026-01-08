@@ -58,10 +58,11 @@ def train(data_dir, finetune, batch_size, project, runname, mps=False, lr=1e-2, 
 
 
     if finetune:
-        basepath = "isamabdullah88-lahore-university-of-management-sciences/Thesis_NequIP_Aspirin"
-        runpath = os.path.join(basepath, ft_runname)
-        restored_ckpt = wandb.restore('results/checkpoints/latest-model.pt', run_path=runpath)
-        checkpoint_path = restored_ckpt.name
+        # basepath = "isamabdullah88-lahore-university-of-management-sciences/Thesis_NequIP_Aspirin"
+        # runpath = os.path.join(basepath, ft_runname)
+        # restored_ckpt = wandb.restore('results/checkpoints/latest-model.pt', run_path=runpath)
+        # checkpoint_path = restored_ckpt.name
+        checkpoint_path = os.path.join("./checkpoints", "latest-model.pt")
         
         model = loadmodel(checkpoint_path, mps=mps)
         print(f"Loaded model from {checkpoint_path} for finetuning.")
