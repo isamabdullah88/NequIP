@@ -9,13 +9,14 @@ DATA_DOWNLOAD_ID="1LyzVyRgdE0H2EFlU6xpOpPscO4GSBLWf"  # Drive file ID
 echo ">>> [1/6] System Update & Essentials..."
 apt-get update && apt-get install -y git wget nano
 
-echo ">>> [3/6] Detecting Environment for PyTorch Geometric..."
-# Automatically detect PyTorch and CUDA versions to build the correct wheel URL
-PT_VER=$(python -c "import torch; print(torch.__version__.split('+')[0])")
-CUDA_VER=$(python -c "import torch; print(torch.version.cuda.replace('.', ''))")
-# If CUDA is 12.x, PyG wheels usually use 'cu121' convention
-if [[ $CUDA_VER == "12"* ]]; then CUDA_SUFFIX="cu121"; else CUDA_SUFFIX="cu${CUDA_VER}"; fi
+echo ">>> [2/6] Installing PyTorch with CUDA Support..."
+CUDA_VER="12.4"
+if [[ $CUDA_VER == "12"* ]]; then CUDA_SUFFIX="cu124"; else CUDA_SUFFIX="cu${CUDA_VER}"; fi
 
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/$CUDA_SUFFIX
+
+echo ">>> [3/6] Detecting Environment for PyTorch Geometric..."
+PT_VER=$(python -c "import torch; print(torch.__version__.split('+')[0])")
 WHEEL_URL="https://data.pyg.org/whl/torch-${PT_VER}+${CUDA_SUFFIX}.html"
 echo "    -> Detected PyTorch: $PT_VER, CUDA: $CUDA_SUFFIX"
 echo "    -> Using Wheel URL: $WHEEL_URL"
