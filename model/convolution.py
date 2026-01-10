@@ -43,9 +43,9 @@ class Radial(nn.Module):
         self.numbasis = indim
 
         self.model = nn.Sequential(
-            nn.Linear(indim, 32),
+            nn.Linear(indim, 64),
             nn.SiLU(),
-            nn.Linear(32, outdim)
+            nn.Linear(64, outdim)
         )
 
     def forward(self, dist):
@@ -61,7 +61,7 @@ class Radial(nn.Module):
 
         
 class Convolution(nn.Module):
-    def __init__(self, l0dim, l1dim, l2dim, numbasis=8, rcut=4.0, mps=True):
+    def __init__(self, l0dim, l1dim, l2dim, numbasis=20, rcut=5.0, mps=True):
         super(Convolution, self).__init__()
         self.mps = mps
 
