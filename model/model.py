@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch_geometric.nn import global_add_pool
 
-from gaussian import gaussian_expand_torch
+from model.gaussian import gaussian_expand_torch
 from .embedding import AtomEmbedding
 from .interaction import InteractionBlock   
 from .output import OutputBlock
