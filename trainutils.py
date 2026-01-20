@@ -6,7 +6,10 @@ from model import NequIP
 def loadmodel(checkpoint_path, mps):
     # Load model architecture
     model = NequIP(mps=mps)
-    checkpoint = torch.load(checkpoint_path, weights_only=True)
+    device = torch.device('mps' if mps and torch.backends.mps.is_available() else
+                        'cuda' if torch.cuda.is_available() else 'cpu')
+    print('device: ', device)
+    checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
     model.load_state_dict(checkpoint["model_state_dict"])
     return model
 

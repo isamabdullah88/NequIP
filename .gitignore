@@ -11,6 +11,8 @@ checkpoints*/
 Presentation/
 wandb/
 wandbkey.py
+vib/
+Results/
 
 # C extensions
 *.so
